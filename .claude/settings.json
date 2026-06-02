@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(npx tsc *)",
+      "Bash(npx next *)",
+      "Bash(PORT=3737 npx next dev)",
+      "Bash(curl -s -X POST http://localhost:3737/api/contact -H \"Content-Type: application/json\" -d '{\"name\":\"Test\",\"contact\":\"test@example.com\",\"projectType\":\"Brand Identity\",\"message\":\"hello world\"}' -w \"\\\\nHTTP: %{http_code}\\\\n\")",
+      "Bash(npm run *)",
+      "WebFetch(domain:www.behance.net)",
+      "Bash(curl -s -o /dev/null -w \"Home: %{http_code}\\\\nWork: %{http_code}\\\\n\" http://localhost:3001/ http://localhost:3001/work)",
+      "WebFetch(domain:muon-office.com)",
+      "WebFetch(domain:chadawrk.com)",
+      "WebFetch(domain:www.earthe.so)",
+      "WebFetch(domain:new-narrative.co)",
+      "Bash(curl -s -o /dev/null -w \"Home: %{http_code} | About: %{http_code} | Work: %{http_code} | Contact: %{http_code}\\\\n\" http://localhost:3001/ http://localhost:3001/about http://localhost:3001/work http://localhost:3001/contact)"
+    ]
+  }
+}
