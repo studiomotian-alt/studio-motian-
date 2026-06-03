@@ -22,7 +22,6 @@
   body {
     background-color: var(--bg);
     color: var(--ink);
-    font-feature-settings: "ss01", "cv11";
   }
 
   ::selection {
@@ -37,11 +36,11 @@
   }
 
   .eyebrow {
-    @apply font-mono text-[10px] uppercase tracking-[0.1em] text-muted;
+    @apply text-[10px] uppercase tracking-[0.1em] text-muted;
   }
 
   .meta {
-    @apply font-mono text-[10px] uppercase tracking-[0.06em] text-muted;
+    @apply text-[10px] uppercase tracking-[0.06em] text-muted;
   }
 
   .hairline {

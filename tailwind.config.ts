@@ -1,5 +1,14 @@
 import type { Config } from "tailwindcss";
 
+const fontStack = [
+  "Pretendard Variable",
+  "Pretendard",
+  "Helvetica Neue",
+  "Helvetica",
+  "Arial",
+  "sans-serif",
+];
+
 const config: Config = {
   content: [
     "./app/**/*.{ts,tsx}",
@@ -16,29 +25,9 @@ const config: Config = {
         accent: "#000000",
       },
       fontFamily: {
-        sans: [
-          "var(--font-inter)",
-          "Pretendard",
-          "ui-sans-serif",
-          "system-ui",
-          "-apple-system",
-          "Segoe UI",
-          "sans-serif",
-        ],
-        display: [
-          "var(--font-inter)",
-          "Pretendard",
-          "ui-sans-serif",
-          "system-ui",
-          "sans-serif",
-        ],
-        mono: [
-          "var(--font-mono)",
-          "ui-monospace",
-          "SFMono-Regular",
-          "Menlo",
-          "monospace",
-        ],
+        sans: fontStack,
+        display: fontStack,
+        mono: fontStack,
       },
       letterSpacing: {
         tightest: "-0.04em",

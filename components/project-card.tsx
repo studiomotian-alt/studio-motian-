@@ -63,16 +63,6 @@ export function ProjectCard({
           </div>
         )}
 
-        {project.year && (
-          <div
-            className={`absolute right-6 top-6 text-[11px] uppercase tracking-widest md:right-8 md:top-8 ${
-              hasImage ? "text-bg/90" : "opacity-70"
-            }`}
-            style={hasImage ? undefined : { color: palette.fg }}
-          >
-            {project.year}
-          </div>
-        )}
         <div className="absolute inset-0 bg-ink/0 transition-colors duration-500 group-hover:bg-ink/5" />
       </div>
 
@@ -80,7 +70,7 @@ export function ProjectCard({
         <div>
           <div className="text-xs text-ink">{project.title}</div>
           <div className="meta mt-1 normal-case tracking-[0.04em]">
-            {project.year ? `${project.year} — ${project.category}` : project.category}
+            {project.category}
           </div>
         </div>
         <span

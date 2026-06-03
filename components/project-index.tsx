@@ -4,8 +4,6 @@ import Image from "next/image";
 import { useState } from "react";
 import type { Project } from "@/lib/projects";
 
-const ACCENT = "#E8290B";
-
 export function ProjectIndex({ projects }: { projects: Project[] }) {
   const [hovered, setHovered] = useState<string | null>(null);
   const active = projects.find((p) => p.slug === hovered);
@@ -18,10 +16,6 @@ export function ProjectIndex({ projects }: { projects: Project[] }) {
     return by.localeCompare(ay);
   });
 
-  // Most recent year — highlighted in the accent colour like the reference.
-  const newestYear =
-    sorted.map((p) => p.year).find((y): y is string => Boolean(y)) ?? null;
-
   let lastYear: string | undefined;
 
   return (
@@ -30,8 +24,6 @@ export function ProjectIndex({ projects }: { projects: Project[] }) {
         {sorted.map((p) => {
           const showYear = p.year !== lastYear;
           lastYear = p.year;
-          const isNewest = Boolean(p.year) && p.year === newestYear;
-          const color = isNewest ? ACCENT : undefined;
 
           return (
             <li
@@ -48,27 +40,18 @@ export function ProjectIndex({ projects }: { projects: Project[] }) {
                 href={p.behanceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group grid grid-cols-[2.75rem_1fr_auto] items-baseline gap-3 py-1.5 md:gap-6"
+                className="group grid grid-cols-[2.75rem_1fr_auto] items-baseline gap-3 py-1.5 text-ink md:gap-6"
                 aria-label={`${p.title}${p.year ? ` (${p.year})` : ""} — view on Behance`}
               >
-                <span
-                  className="text-[11px] tabular-nums tracking-wide"
-                  style={{ color: color ?? "var(--ink)" }}
-                >
+                <span className="text-[11px] tabular-nums tracking-wide">
                   {showYear ? p.year ?? "—" : ""}
                 </span>
 
-                <span
-                  className="text-[13px] leading-snug transition-transform duration-200 group-hover:md:translate-x-1"
-                  style={{ color: color ?? "var(--ink)" }}
-                >
+                <span className="text-[13px] leading-snug transition-transform duration-200 group-hover:md:translate-x-1">
                   {p.title}
                 </span>
 
-                <span
-                  className="justify-self-end text-[11px] tracking-wide"
-                  style={{ color: "var(--muted)" }}
-                >
+                <span className="justify-self-end text-[11px] tracking-wide text-muted">
                   {p.status ?? ""}
                 </span>
               </a>
