@@ -16,6 +16,15 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    slug: "loveit",
+    title: "LOVEIT",
+    category: "Brand Identity / Cafe",
+    thumbnail:
+      "https://mir-s3-cdn-cf.behance.net/projects/404/521045250390737.Y3JvcCw0MDQwLDMxNjAsNTMwLDM2MA.png",
+    behanceUrl:
+      "https://www.behance.net/gallery/250390737/LOVEIT-Cafe-Branding",
+  },
+  {
     slug: "coda-hostel",
     title: "CODA HOSTEL",
     category: "Brand Identity / Hospitality",
