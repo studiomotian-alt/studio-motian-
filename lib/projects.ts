@@ -135,6 +135,24 @@ export const projects: Project[] = [
     behanceUrl:
       "https://www.behance.net/gallery/240238275/Orly-Minbak-Hostel-Branding",
   },
+  {
+    slug: "market-book",
+    title: "Market Book",
+    category: "Brand Identity / Furniture",
+    thumbnail:
+      "https://mir-s3-cdn-cf.behance.net/projects/404/9589b5240185697.Y3JvcCw2NzUsNTI4LDM2MiwxODU.jpg",
+    behanceUrl:
+      "https://www.behance.net/gallery/240185697/Market-Book-Vintage-Furniture-Brand",
+  },
+  {
+    slug: "mogenic",
+    title: "Mogenic",
+    category: "Brand Identity / Cafe",
+    thumbnail:
+      "https://mir-s3-cdn-cf.behance.net/projects/404/121123233311155.Y3JvcCwzMzg5LDI2NTEsMzUyLDA.png",
+    behanceUrl:
+      "https://www.behance.net/gallery/233311155/Mogenic-Cafe-Branding",
+  },
 ];
 
 export const featuredProjects = projects.filter((p) => p.featured);
