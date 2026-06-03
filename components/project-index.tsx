@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import type { Project } from "@/lib/projects";
+import { categoryParts, type Project } from "@/lib/projects";
 
 export function ProjectIndex({ projects }: { projects: Project[] }) {
   const [hovered, setHovered] = useState<string | null>(null);
@@ -24,6 +24,7 @@ export function ProjectIndex({ projects }: { projects: Project[] }) {
         {sorted.map((p) => {
           const showYear = p.year !== lastYear;
           lastYear = p.year;
+          const { scope, industry } = categoryParts(p.category);
 
           return (
             <li
@@ -37,8 +38,8 @@ export function ProjectIndex({ projects }: { projects: Project[] }) {
                 href={p.behanceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group grid grid-cols-[2.75rem_1fr_auto] items-baseline gap-3 py-1.5 text-ink md:gap-6"
-                aria-label={`${p.title}${p.year ? ` (${p.year})` : ""} — view on Behance`}
+                className="group grid grid-cols-[2.75rem_1fr] items-baseline gap-3 py-1.5 text-ink md:grid-cols-[2.75rem_minmax(0,1fr)_auto_8rem] md:gap-6"
+                aria-label={`${p.title}${p.year ? ` (${p.year})` : ""} — ${p.category} — view on Behance`}
               >
                 <span className="text-[11px] tabular-nums tracking-wide">
                   {showYear ? p.year ?? "—" : ""}
@@ -48,8 +49,12 @@ export function ProjectIndex({ projects }: { projects: Project[] }) {
                   {p.title}
                 </span>
 
-                <span className="justify-self-end text-[11px] tracking-wide text-muted">
-                  {p.status ?? ""}
+                <span className="hidden text-[11px] tracking-wide text-muted md:block">
+                  {scope}
+                </span>
+
+                <span className="hidden text-right text-[11px] tracking-wide text-muted md:block">
+                  {industry}
                 </span>
               </a>
             </li>

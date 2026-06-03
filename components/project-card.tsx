@@ -1,5 +1,5 @@
 import Image from "next/image";
-import type { Project } from "@/lib/projects";
+import { categoryParts, type Project } from "@/lib/projects";
 
 const palettes = [
   { bg: "#E8E6DF", fg: "#1A1A1A" },
@@ -27,6 +27,7 @@ export function ProjectCard({
 }) {
   const palette = palettes[(hash(project.slug) + index) % palettes.length];
   const hasImage = Boolean(project.thumbnail);
+  const { scope, industry } = categoryParts(project.category);
 
   return (
     <a
@@ -62,23 +63,27 @@ export function ProjectCard({
             </div>
           </div>
         )}
-
         <div className="absolute inset-0 bg-ink/0 transition-colors duration-500 group-hover:bg-ink/5" />
       </div>
 
-      <div className="mt-2.5 flex items-start justify-between gap-3">
-        <div>
-          <div className="text-xs text-ink">{project.title}</div>
-          <div className="meta mt-1 normal-case tracking-[0.04em]">
-            {project.category}
-          </div>
+      <div className="mt-2.5">
+        <div className="flex items-baseline justify-between gap-3">
+          <span className="text-xs text-ink">{project.title}</span>
+          <span
+            aria-hidden
+            className="meta transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-ink"
+          >
+            ↗
+          </span>
         </div>
-        <span
-          aria-hidden
-          className="meta inline-block transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-ink"
-        >
-          ↗
-        </span>
+        <div className="mt-1 flex items-baseline justify-between gap-3">
+          <span className="meta normal-case tracking-[0.04em]">{scope}</span>
+          {industry && (
+            <span className="meta normal-case tracking-[0.04em]">
+              {industry}
+            </span>
+          )}
+        </div>
       </div>
     </a>
   );
