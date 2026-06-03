@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -104,14 +103,6 @@ export default function AboutPage() {
             ))}
           </ol>
         </div>
-      </section>
-
-      <div className="hairline container-x" />
-
-      <section className="container-x py-10">
-        <Link href="/work" className="link-underline text-sm">
-          Selected works
-        </Link>
       </section>
     </>
   );

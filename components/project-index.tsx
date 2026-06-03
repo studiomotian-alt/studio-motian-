@@ -32,9 +32,6 @@ export function ProjectIndex({ projects }: { projects: Project[] }) {
               onMouseLeave={() =>
                 setHovered((cur) => (cur === p.slug ? null : cur))
               }
-              className={`transition-opacity ${
-                hovered && hovered !== p.slug ? "md:opacity-40" : "opacity-100"
-              }`}
             >
               <a
                 href={p.behanceUrl}
@@ -60,10 +57,10 @@ export function ProjectIndex({ projects }: { projects: Project[] }) {
         })}
       </ul>
 
-      {/* Floating hover preview — fixed top-right, desktop only */}
+      {/* Floating hover preview — fixed, desktop only */}
       <div
         aria-hidden
-        className={`pointer-events-none fixed right-6 top-28 z-40 hidden w-[300px] transition-all duration-300 md:block lg:right-10 lg:w-[360px] xl:right-16 ${
+        className={`pointer-events-none fixed right-[12%] top-28 z-40 hidden w-[420px] transition-all duration-300 md:block lg:right-[16%] lg:w-[500px] xl:right-[18%] xl:w-[580px] ${
           active && active.thumbnail
             ? "translate-y-0 opacity-100"
             : "translate-y-2 opacity-0"
@@ -79,7 +76,7 @@ export function ProjectIndex({ projects }: { projects: Project[] }) {
               src={active.thumbnail}
               alt=""
               fill
-              sizes="360px"
+              sizes="(min-width: 1280px) 580px, (min-width: 1024px) 500px, 420px"
               className="object-cover"
             />
           </div>
