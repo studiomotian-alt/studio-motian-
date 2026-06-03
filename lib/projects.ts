@@ -29,8 +29,29 @@ export const projects: Project[] = [
       "https://www.behance.net/gallery/247625525/GIP-STUDIO-Spatial-Design-Studio-Branding",
     featured: true,
   },
+  {
+    slug: "coda-hostel",
+    year: "2026",
+    title: "CODA HOSTEL",
+    category: "Brand Identity / Hospitality",
+    thumbnail:
+      "https://mir-s3-cdn-cf.behance.net/projects/404/df1972248515105.Y3JvcCwyNDk4LDE5NTQsMjUzLDIwNA.jpg",
+    behanceUrl:
+      "https://www.behance.net/gallery/248515105/CODA-HOSTEL-Hostel-Branding",
+    featured: true,
+  },
 
   // ── 2025 ──
+  {
+    slug: "loveit",
+    year: "2025",
+    title: "LOVEIT",
+    category: "Brand Identity / Cafe",
+    thumbnail:
+      "https://mir-s3-cdn-cf.behance.net/projects/404/521045250390737.Y3JvcCw0MDQwLDMxNjAsNTMwLDM2MA.png",
+    behanceUrl:
+      "https://www.behance.net/gallery/250390737/LOVEIT-Cafe-Branding",
+  },
   {
     slug: "retaw",
     year: "2025",
@@ -143,6 +164,38 @@ export const projects: Project[] = [
     featured: true,
   },
 
+  // ── 2024 ──
+  {
+    slug: "jigyo",
+    year: "2024",
+    title: "Jigyo",
+    category: "Brand Identity / Pub",
+    thumbnail:
+      "https://mir-s3-cdn-cf.behance.net/projects/404/8ebd94236740913.Y3JvcCw0MjcxLDMzNDEsNzA4LDA.png",
+    behanceUrl:
+      "https://www.behance.net/gallery/236740913/Jigyo-Korean-Pub-Branding",
+  },
+  {
+    slug: "one-high",
+    year: "2024",
+    title: "ONE HIGH",
+    category: "Brand Identity / Pub",
+    thumbnail:
+      "https://mir-s3-cdn-cf.behance.net/projects/404/2e7be6238411739.Y3JvcCwzMzU0LDI2MjQsNDIzLDA.jpg",
+    behanceUrl:
+      "https://www.behance.net/gallery/238411739/ONE-HIGH-Pizza-Pub-Branding",
+  },
+  {
+    slug: "sogeum-dohwa",
+    year: "2024",
+    title: "Sogeum dohwa",
+    category: "Brand Identity / Cafe",
+    thumbnail:
+      "https://mir-s3-cdn-cf.behance.net/projects/404/fbbf6f240024845.Y3JvcCw0NzA0LDM2ODAsNjUyLDA.jpg",
+    behanceUrl:
+      "https://www.behance.net/gallery/240024845/Sogeum-dohwa-Cafe-Branding",
+  },
+
   // ── 2023 ──
   {
     slug: "mogenic",
@@ -153,27 +206,6 @@ export const projects: Project[] = [
       "https://mir-s3-cdn-cf.behance.net/projects/404/121123233311155.Y3JvcCwzMzg5LDI2NTEsMzUyLDA.png",
     behanceUrl:
       "https://www.behance.net/gallery/233311155/Mogenic-Cafe-Branding",
-  },
-
-  // ── 연도 확정 대기 (사용자 확인 후 위치 이동) ──
-  {
-    slug: "loveit",
-    title: "LOVEIT",
-    category: "Brand Identity / Cafe",
-    thumbnail:
-      "https://mir-s3-cdn-cf.behance.net/projects/404/521045250390737.Y3JvcCw0MDQwLDMxNjAsNTMwLDM2MA.png",
-    behanceUrl:
-      "https://www.behance.net/gallery/250390737/LOVEIT-Cafe-Branding",
-  },
-  {
-    slug: "coda-hostel",
-    title: "CODA HOSTEL",
-    category: "Brand Identity / Hospitality",
-    thumbnail:
-      "https://mir-s3-cdn-cf.behance.net/projects/404/df1972248515105.Y3JvcCwyNDk4LDE5NTQsMjUzLDIwNA.jpg",
-    behanceUrl:
-      "https://www.behance.net/gallery/248515105/CODA-HOSTEL-Hostel-Branding",
-    featured: true,
   },
 ];
 
