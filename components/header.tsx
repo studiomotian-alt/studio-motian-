@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -38,10 +39,17 @@ export function Header() {
       <div className="container-x flex h-11 items-center justify-between">
         <Link
           href="/"
-          className="text-xs text-ink"
+          className="flex items-center"
           aria-label="Studio Motian — Home"
         >
-          Studio Motian
+          <Image
+            src="/logo.png"
+            alt="Studio Motian"
+            width={1702}
+            height={306}
+            priority
+            className="h-[18px] w-auto"
+          />
         </Link>
 
         <nav className="hidden items-center gap-5 md:flex">
