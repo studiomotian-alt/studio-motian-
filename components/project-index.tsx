@@ -5,7 +5,10 @@ import { useState } from "react";
 import type { Project } from "@/lib/projects";
 
 const ROW_CLASS =
-  "group grid grid-cols-[2.75rem_1fr] items-baseline gap-3 py-1.5 text-ink md:grid-cols-[2.75rem_minmax(0,1fr)_14rem_11rem] md:gap-6";
+  "group grid grid-cols-[2.75rem_1fr] items-baseline gap-3 py-1.5 text-ink md:grid-cols-[2.75rem_minmax(0,1fr)_12rem_14rem] md:gap-6";
+
+const META_CLASS =
+  "hidden whitespace-nowrap text-[11px] tracking-wide text-muted group-hover:font-bold group-hover:text-ink md:block";
 
 export function ProjectIndex({ projects }: { projects: Project[] }) {
   const [hovered, setHovered] = useState<string | null>(null);
@@ -36,13 +39,9 @@ export function ProjectIndex({ projects }: { projects: Project[] }) {
                 {p.title}
               </span>
 
-              <span className="hidden whitespace-nowrap text-[11px] tracking-wide text-muted group-hover:font-bold group-hover:text-ink md:block">
-                {p.scope}
-              </span>
-
-              <span className="hidden whitespace-nowrap text-[11px] tracking-wide text-muted group-hover:font-bold group-hover:text-ink md:block">
-                {p.industry}
-              </span>
+              {/* Industry, then scope (per layout spec) */}
+              <span className={META_CLASS}>{p.industry}</span>
+              <span className={META_CLASS}>{p.scope}</span>
             </>
           );
 
@@ -72,10 +71,11 @@ export function ProjectIndex({ projects }: { projects: Project[] }) {
         })}
       </ul>
 
-      {/* Floating hover preview — fixed, desktop only */}
+      {/* Floating hover preview — right of the scope column, top-aligned with
+          the first row. Desktop only. */}
       <div
         aria-hidden
-        className={`pointer-events-none fixed left-[18rem] top-28 z-40 hidden w-[400px] transition-all duration-300 md:block lg:w-[460px] xl:w-[520px] ${
+        className={`pointer-events-none fixed left-[70rem] top-48 z-40 hidden w-[420px] transition-all duration-300 md:block xl:w-[480px] ${
           active && active.thumbnail
             ? "translate-y-0 opacity-100"
             : "translate-y-2 opacity-0"
@@ -91,7 +91,7 @@ export function ProjectIndex({ projects }: { projects: Project[] }) {
               src={active.thumbnail}
               alt=""
               fill
-              sizes="(min-width: 1280px) 580px, (min-width: 1024px) 500px, 420px"
+              sizes="480px"
               className="object-cover"
             />
           </div>
