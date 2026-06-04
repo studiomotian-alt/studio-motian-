@@ -15,7 +15,7 @@ const navItems = [
 export function SiteNav() {
   return (
     <>
-      <nav className="fixed right-6 top-8 z-50 flex flex-col items-end gap-2 md:right-12 md:top-10 lg:right-16">
+      <nav className="fixed right-6 top-24 z-50 flex flex-col items-end gap-2 md:right-12 md:top-28 lg:right-16">
         {navItems.map((item) => (
           <Link
             key={item.href}
