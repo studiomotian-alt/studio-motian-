@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { PROJECT_TYPES } from "@/lib/contact";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
@@ -89,34 +88,17 @@ export function ContactForm() {
           autoComplete="email"
         />
 
-        <div>
-          <label htmlFor="projectType" className={LABEL}>
-            Project Type / 문의 분야
-          </label>
-          <div className="border-b border-line">
-            <select
-              id="projectType"
-              name="projectType"
-              required
-              defaultValue=""
-              className="mt-2 w-full appearance-none border-0 bg-transparent py-2 text-[13px] text-ink outline-none focus:ring-0"
-            >
-              <option value="" disabled>
-                Select / 선택
-              </option>
-              {PROJECT_TYPES.map((t) => (
-                <option key={t} value={t}>
-                  {t}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
+        <Field
+          name="projectType"
+          label="Project Type / 문의 분야"
+          required
+          placeholder="예: 브랜드 아이덴티티, 패키지 디자인"
+        />
 
         <Field
           name="schedule"
           label="Expected Schedule / 희망 일정"
-          placeholder="예: 2026 Q1"
+          placeholder="예: 6월 런칭 희망, 3월 프로젝트 시작"
         />
       </div>
 

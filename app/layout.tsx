@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { Footer } from "@/components/footer";
 import { SiteNav } from "@/components/site-nav";
 
 const bastardus = localFont({
@@ -51,7 +50,6 @@ export default function RootLayout({
       <body className="min-h-screen font-sans antialiased">
         <SiteNav />
         <main>{children}</main>
-        <Footer />
       </body>
     </html>
   );
