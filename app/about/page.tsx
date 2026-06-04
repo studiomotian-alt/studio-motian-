@@ -102,7 +102,7 @@ export default function AboutPage() {
       <div className="relative z-10 mt-12 grid max-w-5xl grid-cols-1 gap-12 md:mt-20 md:grid-cols-10 md:gap-10">
         {/* Our Services — left, with faint background illustration */}
         <div className="relative md:col-span-4">
-          <div className="pointer-events-none absolute -top-10 left-0 -z-10 hidden w-full md:block">
+          <div className="pointer-events-none absolute -top-10 -z-10 hidden md:-left-12 md:block md:w-[calc(100%+3rem)] lg:-left-16 lg:w-[calc(100%+4rem)]">
             <Image
               src="/about_bg.png"
               alt=""
