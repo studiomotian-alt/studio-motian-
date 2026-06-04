@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { CONTACT } from "@/lib/contact";
 
 const navItems = [
   { label: "HOME", href: "/" },
@@ -13,8 +14,8 @@ const navItems = [
 
 /**
  * Persistent site chrome — fixed on every page so only the page content
- * scrolls: the top-left logo, the right-side navigation, and the
- * bottom-right illustration.
+ * scrolls: top-left logo, right-side navigation, bottom-right contact links
+ * and illustration.
  */
 export function SiteNav() {
   const pathname = usePathname();
@@ -40,8 +41,8 @@ export function SiteNav() {
         />
       </Link>
 
-      {/* Navigation — fixed top-right */}
-      <nav className="fixed right-6 top-24 z-50 flex flex-col items-end gap-2 md:right-12 md:top-28 lg:right-16">
+      {/* Navigation — fixed top-right, aligned with the content top */}
+      <nav className="fixed right-6 top-40 z-50 flex flex-col items-end gap-10 md:right-12 md:top-48 lg:right-16">
         {navItems.map((item) => (
           <Link
             key={item.href}
@@ -55,6 +56,29 @@ export function SiteNav() {
           </Link>
         ))}
       </nav>
+
+      {/* Contact links — fixed bottom-right, above the illustration */}
+      <div className="fixed bottom-32 right-6 z-40 hidden flex-col items-end gap-1.5 md:bottom-48 md:right-12 md:flex lg:right-16">
+        <div className="flex gap-4 text-[11px]">
+          <a
+            href={CONTACT.behanceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-2 hover:opacity-60"
+          >
+            Behance
+          </a>
+          <a
+            href={CONTACT.instagramUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-2 hover:opacity-60"
+          >
+            Instagram
+          </a>
+        </div>
+        <div className="text-[11px] text-muted">E-mail: {CONTACT.email}</div>
+      </div>
 
       {/* Illustration — fixed bottom-right */}
       <div

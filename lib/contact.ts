@@ -2,7 +2,7 @@ export const CONTACT = {
   email: "studio.motian@gmail.com",
   kakaoUrl: "#",
   instagramUrl: "#",
-  behanceUrl: "#",
+  behanceUrl: "https://www.behance.net/624687c7",
 };
 
 export const PROJECT_TYPES = [

@@ -80,7 +80,7 @@ const timeline = [
 export default function AboutPage() {
   return (
     <section
-      className="relative min-h-[100svh] overflow-hidden px-6 py-8 md:px-12 md:py-10 lg:px-16"
+      className="relative min-h-[100svh] overflow-hidden px-6 pb-12 md:px-12 md:pb-16 lg:px-16"
     >
       {/* Left background illustration (decorative) — same height as home */}
       <div className="pointer-events-none absolute left-0 top-[14%] -z-10 hidden md:block">
@@ -93,7 +93,7 @@ export default function AboutPage() {
         />
       </div>
 
-      <div className="relative z-10 grid max-w-5xl grid-cols-1 gap-12 pt-24 md:grid-cols-10 md:gap-10 md:pt-28">
+      <div className="relative z-10 grid max-w-5xl grid-cols-1 gap-12 pt-40 md:grid-cols-10 md:gap-10 md:pt-48">
         {/* Our Services — left, with faint background illustration */}
         <div className="relative md:col-span-4">
           <h2 className="text-[15px] text-ink">Our Services</h2>
