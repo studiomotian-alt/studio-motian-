@@ -1,7 +1,7 @@
 export const CONTACT = {
   email: "studio.motian@gmail.com",
   kakaoUrl: "#",
-  instagramUrl: "#",
+  instagramUrl: "https://www.instagram.com/studio.motian/",
   behanceUrl: "https://www.behance.net/624687c7",
 };
 
