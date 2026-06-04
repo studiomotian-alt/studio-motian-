@@ -5,7 +5,7 @@ import { useState } from "react";
 import type { Project } from "@/lib/projects";
 
 const ROW_CLASS =
-  "group grid grid-cols-[2.75rem_1fr] items-baseline gap-3 py-1.5 text-ink md:grid-cols-[2.75rem_minmax(0,1fr)_auto] md:gap-8";
+  "group grid grid-cols-[2.75rem_1fr] items-baseline gap-3 py-1.5 text-ink md:grid-cols-[2.75rem_minmax(0,1fr)_14rem_11rem] md:gap-6";
 
 export function ProjectIndex({ projects }: { projects: Project[] }) {
   const [hovered, setHovered] = useState<string | null>(null);
@@ -38,6 +38,10 @@ export function ProjectIndex({ projects }: { projects: Project[] }) {
 
               <span className="hidden whitespace-nowrap text-[11px] tracking-wide text-muted group-hover:font-bold group-hover:text-ink md:block">
                 {p.scope}
+              </span>
+
+              <span className="hidden whitespace-nowrap text-[11px] tracking-wide text-muted group-hover:font-bold group-hover:text-ink md:block">
+                {p.industry}
               </span>
             </>
           );
