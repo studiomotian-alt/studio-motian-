@@ -5,7 +5,7 @@ import { useState } from "react";
 import type { Project } from "@/lib/projects";
 
 const ROW_CLASS =
-  "group grid grid-cols-[2.75rem_1fr] items-baseline gap-3 py-1.5 text-ink md:grid-cols-[2.75rem_minmax(0,1fr)_12rem_14rem] md:gap-6";
+  "group grid grid-cols-[2.75rem_1fr] items-baseline gap-3 py-1.5 text-ink md:grid-cols-[2.75rem_15rem_11rem_14rem] md:gap-5";
 
 const META_CLASS =
   "hidden whitespace-nowrap text-[11px] tracking-wide text-muted group-hover:font-bold group-hover:text-ink md:block";
@@ -75,7 +75,7 @@ export function ProjectIndex({ projects }: { projects: Project[] }) {
           the first row. Desktop only. */}
       <div
         aria-hidden
-        className={`pointer-events-none fixed left-[70rem] top-48 z-40 hidden w-[420px] transition-all duration-300 md:block xl:w-[480px] ${
+        className={`pointer-events-none fixed left-[52rem] top-48 z-40 hidden w-[420px] transition-all duration-300 md:block xl:w-[480px] ${
           active && active.thumbnail
             ? "translate-y-0 opacity-100"
             : "translate-y-2 opacity-0"
