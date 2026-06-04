@@ -11,6 +11,13 @@ const bastardus = localFont({
   display: "swap",
 });
 
+// Korean glyphs fall back to MinSans (Latin uses BastardusSans, which has no Hangul).
+const minSans = localFont({
+  src: "./fonts/MinSans-ExtraLight.otf",
+  variable: "--font-minsans",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://studio-motian.com"),
   title: {
@@ -41,7 +48,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ko" className={bastardus.variable}>
+    <html lang="ko" className={`${bastardus.variable} ${minSans.variable}`}>
       <body className="min-h-screen font-sans antialiased">
         <Header />
         <SiteNav />

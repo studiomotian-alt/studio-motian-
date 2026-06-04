@@ -1,12 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import localFont from "next/font/local";
-
-const minSans = localFont({
-  src: "../fonts/MinSans-ExtraLight.otf",
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: "About",
@@ -87,7 +81,7 @@ const timeline = [
 export default function AboutPage() {
   return (
     <section
-      className={`${minSans.className} relative min-h-[100svh] overflow-hidden px-6 py-8 md:px-12 md:py-10 lg:px-16`}
+      className="relative min-h-[100svh] overflow-hidden px-6 py-8 md:px-12 md:py-10 lg:px-16"
     >
       {/* Logo — top left */}
       <Link
