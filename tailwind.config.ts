@@ -20,8 +20,8 @@ const config: Config = {
     extend: {
       colors: {
         bg: "#FFFFFF",
-        ink: "#0A0A0A",
-        muted: "#7A7A7A",
+        ink: "#000000",
+        muted: "#000000",
         line: "#E8E8E8",
         accent: "#000000",
       },

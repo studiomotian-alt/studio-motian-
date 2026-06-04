@@ -34,80 +34,103 @@ export default function HomePage() {
 
   return (
     <section className="relative min-h-[100svh] overflow-hidden px-6 py-8 md:px-12 md:py-10 lg:px-16">
-      {/* Logo — top left */}
-      <Link
-        href="/"
-        aria-label="Studio Motian — Home"
-        className="inline-block"
-      >
+      {/* Left background illustration (decorative) */}
+      <div className="pointer-events-none absolute left-0 top-[14%] z-0 hidden w-[44%] max-w-[620px] md:block">
         <Image
-          src="/logo.png"
-          alt="Studio Motian"
-          width={1702}
-          height={306}
+          src="/illust-bg.png"
+          alt=""
+          width={640}
+          height={811}
           priority
-          className="h-7 w-auto md:h-9"
+          className="h-auto w-full"
         />
-      </Link>
+      </div>
 
-      <div className="mt-12 grid grid-cols-1 gap-12 md:mt-20 md:grid-cols-12 md:gap-6">
-        {/* Right nav — top-right on desktop, under logo on mobile */}
-        <nav className="flex flex-row gap-5 md:col-span-2 md:col-start-11 md:row-start-1 md:flex-col md:items-end md:gap-2">
-          {nav.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="text-sm tracking-wide text-ink transition hover:opacity-60"
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
+      {/* Bottom-right illustration (decorative) */}
+      <div className="pointer-events-none absolute bottom-[5%] right-[4%] z-0 w-[150px] md:w-[240px]">
+        <Image
+          src="/illust-shell.png"
+          alt=""
+          width={320}
+          height={180}
+          className="h-auto w-full"
+        />
+      </div>
 
-        {/* Left — studio intro (not interactive) */}
-        <div className="relative md:col-span-4 md:col-start-1 md:row-start-1">
-          {/* TODO: faint background illustration (asset pending) */}
-          <div className="relative space-y-5 text-[13px] leading-[1.75] text-ink">
-            {introParagraphs.map((para, i) => (
-              <p key={i}>
-                {para.map((line, j) => (
-                  <span key={j} className="block">
-                    {line}
-                  </span>
-                ))}
-              </p>
-            ))}
-          </div>
-        </div>
+      {/* Content */}
+      <div className="relative z-10">
+        {/* Logo — top left */}
+        <Link
+          href="/"
+          aria-label="Studio Motian — Home"
+          className="inline-block"
+        >
+          <Image
+            src="/logo.png"
+            alt="Studio Motian"
+            width={1702}
+            height={306}
+            priority
+            className="h-7 w-auto md:h-9"
+          />
+        </Link>
 
-        {/* Center — year-grouped index (display only, not interactive) */}
-        <div className="md:col-span-5 md:col-start-6 md:row-start-1">
-          <div className="space-y-6">
-            {years.map((group) => (
-              <div
-                key={group.year}
-                className="grid grid-cols-[3.5rem_1fr] gap-x-3"
+        <div className="mt-12 grid grid-cols-1 gap-12 md:mt-20 md:grid-cols-12 md:gap-6">
+          {/* Right nav — top-right on desktop, under logo on mobile */}
+          <nav className="flex flex-row gap-5 md:col-span-2 md:col-start-11 md:row-start-1 md:flex-col md:items-end md:gap-2">
+            {nav.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="text-sm tracking-wide text-ink transition hover:opacity-60"
               >
-                <div className="text-[13px] tabular-nums text-ink">
-                  {group.year}
-                </div>
-                <ul>
-                  {group.projects.map((p) => (
-                    <li
-                      key={p.slug}
-                      className="text-[13px] leading-[1.7] text-ink"
-                    >
-                      {p.title}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                {item.label}
+              </Link>
             ))}
+          </nav>
+
+          {/* Left — studio intro (not interactive) */}
+          <div className="relative md:col-span-4 md:col-start-1 md:row-start-1">
+            <div className="space-y-5 text-[13px] leading-[1.75] text-ink">
+              {introParagraphs.map((para, i) => (
+                <p key={i}>
+                  {para.map((line, j) => (
+                    <span key={j} className="block">
+                      {line}
+                    </span>
+                  ))}
+                </p>
+              ))}
+            </div>
+          </div>
+
+          {/* Center — year-grouped index (display only, not interactive) */}
+          <div className="md:col-span-5 md:col-start-6 md:row-start-1">
+            <div className="space-y-6">
+              {years.map((group) => (
+                <div
+                  key={group.year}
+                  className="grid grid-cols-[3.5rem_1fr] gap-x-3"
+                >
+                  <div className="text-[13px] tabular-nums text-ink">
+                    {group.year}
+                  </div>
+                  <ul>
+                    {group.projects.map((p) => (
+                      <li
+                        key={p.slug}
+                        className="text-[13px] leading-[1.7] text-ink"
+                      >
+                        {p.title}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
-
-      {/* TODO: bottom-right illustration (asset pending) */}
     </section>
   );
 }
