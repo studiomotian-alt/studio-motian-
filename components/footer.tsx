@@ -1,7 +1,15 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { CONTACT } from "@/lib/contact";
 
 export function Footer() {
+  const pathname = usePathname();
+
+  // Home is a standalone landing; hide the global footer there.
+  if (pathname === "/") return null;
+
   return (
     <footer className="mt-12 border-t border-line">
       <div className="container-x flex flex-col gap-3 py-6 text-xs text-muted md:flex-row md:items-center md:justify-between">

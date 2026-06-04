@@ -28,6 +28,9 @@ export function Header() {
     setOpen(false);
   }, [pathname]);
 
+  // Home has its own logo + navigation; hide the global header there.
+  if (pathname === "/") return null;
+
   return (
     <header
       className={`sticky top-0 z-50 w-full border-b transition-colors ${

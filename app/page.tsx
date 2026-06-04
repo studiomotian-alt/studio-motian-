@@ -1,120 +1,149 @@
+import Image from "next/image";
 import Link from "next/link";
-import { ProjectCard } from "@/components/project-card";
-import { featuredProjects } from "@/lib/projects";
-import { CONTACT } from "@/lib/contact";
 
-const services = [
-  "Brand Strategy",
-  "Brand Naming & Language",
-  "Visual Direction",
-  "Brand Identity Design",
-  "Application Design",
-  "Brand Guideline",
+const introParagraphs: string[][] = [
+  [
+    "We are a design studio that begins with structure.",
+    "Studio Motian starts from questions that uncover the essence of a brand.",
+    "We seek the answer to its “why,” then structure it through language and design so it can endure over time.",
+  ],
+  [
+    "The brands we create are not merely beautiful.",
+    "They are brands that can operate, last, and be used in the real world.",
+  ],
+  ["The name Motian is derived from the following four words."],
+  [
+    "(01) Mote: a tiny fragment — the smallest unit of brand language",
+    "(02) Moti: a pearl — a small, condensed essence",
+    "(03) Motive: intention — the beginning of the message a brand wants to convey",
+    "(04) Motiyan: the plural form of pearl — the result of diverse expansion",
+  ],
+  ["We pursue meaning over sensation, and sustainability over ornament."],
 ];
 
-const process = [
-  { step: "01", title: "Define" },
-  { step: "02", title: "Develop" },
-  { step: "03", title: "Design" },
-  { step: "04", title: "Apply" },
+const works: { year: string; items: string[] }[] = [
+  { year: "2026", items: ["GIP STUDIO", "CODA HOSTEL"] },
+  {
+    year: "2025",
+    items: [
+      "LOVEIT",
+      "Retaw",
+      "Ereonnal Bakery",
+      "BALANCE",
+      "Market Book",
+      "BT BUGER & TACO",
+      "NOWHERE",
+      "Orly Minbak",
+      "VANGWA",
+      "Truly Baker",
+      "AVEC",
+      "Hyewon Yanggwa",
+      "BRICK BAKERS",
+      "Goyu",
+      "Onit House",
+      "House Oson",
+      "Dalkom on Baking",
+      "Dear. My Muffin",
+    ],
+  },
+  {
+    year: "2024",
+    items: [
+      "Jigyo",
+      "ONE HIGH",
+      "Sogeum dohwa",
+      "Bring on",
+      "Fall in football",
+      "A piece of cloud",
+    ],
+  },
+  { year: "2023", items: ["Mogenic", "A part of me", "Bonding Market"] },
+];
+
+const nav = [
+  { label: "HOME", href: "/" },
+  { label: "ABOUT", href: "/about" },
+  { label: "WORK", href: "/work" },
+  { label: "CONTACT", href: "/contact" },
 ];
 
 export default function HomePage() {
   return (
-    <>
-      <section className="container-x py-10">
-        <p className="max-w-md text-sm leading-[1.7] text-ink">
-          Studio Motian designs the direction, language, and visual systems of brands.
-        </p>
+    <section className="relative min-h-[100svh] overflow-hidden px-6 py-8 md:px-12 md:py-10 lg:px-16">
+      {/* Logo — top left */}
+      <Link
+        href="/"
+        aria-label="Studio Motian — Home"
+        className="inline-block"
+      >
+        <Image
+          src="/logo.png"
+          alt="Studio Motian"
+          width={1702}
+          height={306}
+          priority
+          className="h-7 w-auto md:h-9"
+        />
+      </Link>
 
-        <div className="mt-5 flex gap-x-5 gap-y-2 text-sm">
-          <Link href="/work" className="link-underline">
-            Work
-          </Link>
-          <Link href="/contact" className="link-underline">
-            Contact
-          </Link>
-        </div>
-      </section>
-
-      <div className="hairline container-x" />
-
-      <section className="container-x py-10">
-        <div className="grid gap-4 md:grid-cols-12">
-          <div className="md:col-span-3">
-            <div className="eyebrow">Services</div>
-          </div>
-          <ul className="md:col-span-8 md:col-start-5">
-            {services.map((s) => (
-              <li key={s} className="text-sm leading-[1.9] text-ink">
-                {s}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      <div className="hairline container-x" />
-
-      <section className="container-x py-10">
-        <div className="grid gap-4 md:grid-cols-3">
-          {featuredProjects.map((p, i) => (
-            <ProjectCard key={p.slug} project={p} index={i} />
+      <div className="mt-12 grid grid-cols-1 gap-12 md:mt-20 md:grid-cols-12 md:gap-6">
+        {/* Right nav — placed top-right on desktop, appears under logo on mobile */}
+        <nav className="flex flex-row gap-5 md:order-none md:col-span-2 md:col-start-11 md:row-start-1 md:flex-col md:items-end md:gap-2">
+          {nav.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="text-sm tracking-wide text-ink transition hover:opacity-60"
+            >
+              {item.label}
+            </Link>
           ))}
-        </div>
-      </section>
+        </nav>
 
-      <div className="hairline container-x" />
-
-      <section className="container-x py-10">
-        <div className="grid gap-4 md:grid-cols-12">
-          <div className="md:col-span-3">
-            <div className="eyebrow">Process</div>
-          </div>
-          <ol className="md:col-span-8 md:col-start-5">
-            {process.map((p) => (
-              <li
-                key={p.step}
-                className="grid grid-cols-[2rem_1fr] gap-3 text-sm leading-[1.9] text-ink"
-              >
-                <span className="meta normal-case">{p.step}</span>
-                <span>{p.title}</span>
-              </li>
+        {/* Left — studio intro (not interactive) */}
+        <div className="relative md:col-span-4 md:col-start-1 md:row-start-1">
+          {/* TODO: faint background illustration (asset pending) */}
+          <div className="relative space-y-5 text-[13px] leading-[1.75] text-ink">
+            {introParagraphs.map((para, i) => (
+              <p key={i}>
+                {para.map((line, j) => (
+                  <span key={j} className="block">
+                    {line}
+                  </span>
+                ))}
+              </p>
             ))}
-          </ol>
-        </div>
-      </section>
-
-      <div className="hairline container-x" />
-
-      <section className="container-x py-10">
-        <div className="grid gap-4 md:grid-cols-12">
-          <div className="md:col-span-3">
-            <div className="eyebrow">Contact</div>
-          </div>
-          <div className="md:col-span-8 md:col-start-5">
-            <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm">
-              <a
-                href={`mailto:${CONTACT.email}`}
-                className="link-underline"
-              >
-                Email
-              </a>
-              <a
-                href={CONTACT.kakaoUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="link-underline"
-              >
-                Kakao
-              </a>
-              <Link href="/contact" className="link-underline">
-                Form
-              </Link>
-            </div>
           </div>
         </div>
-      </section>
-    </>
+
+        {/* Center — year-grouped index (display only, not interactive) */}
+        <div className="md:col-span-5 md:col-start-6 md:row-start-1">
+          <div className="space-y-6">
+            {works.map((group) => (
+              <div
+                key={group.year}
+                className="grid grid-cols-[3.5rem_1fr] gap-x-3"
+              >
+                <div className="text-[13px] tabular-nums text-ink">
+                  {group.year}
+                </div>
+                <ul>
+                  {group.items.map((name) => (
+                    <li
+                      key={name}
+                      className="text-[13px] leading-[1.7] text-ink"
+                    >
+                      {name}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* TODO: bottom-right illustration (asset pending) */}
+    </section>
   );
 }
