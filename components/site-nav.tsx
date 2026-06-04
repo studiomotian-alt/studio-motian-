@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const navItems = [
   { label: "HOME", href: "/" },
@@ -13,6 +16,11 @@ const navItems = [
  * the right-side navigation and the bottom-right illustration.
  */
 export function SiteNav() {
+  const pathname = usePathname();
+
+  const isActive = (href: string) =>
+    href === "/" ? pathname === "/" : pathname.startsWith(href);
+
   return (
     <>
       <nav className="fixed right-6 top-24 z-50 flex flex-col items-end gap-2 md:right-12 md:top-28 lg:right-16">
@@ -20,7 +28,10 @@ export function SiteNav() {
           <Link
             key={item.href}
             href={item.href}
-            className="text-sm tracking-wide text-ink transition hover:opacity-60"
+            aria-current={isActive(item.href) ? "page" : undefined}
+            className={`text-sm tracking-wide text-ink transition hover:opacity-60 ${
+              isActive(item.href) ? "font-bold" : ""
+            }`}
           >
             {item.label}
           </Link>
