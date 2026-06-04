@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function WorkPage() {
   return (
-    <section className="container-x py-10">
+    <section className="container-x pb-10 pt-24 md:pt-28">
       <ProjectIndex projects={projects} />
     </section>
   );

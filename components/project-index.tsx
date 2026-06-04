@@ -32,11 +32,11 @@ export function ProjectIndex({ projects }: { projects: Project[] }) {
                 {showYear ? year || "—" : ""}
               </span>
 
-              <span className="text-[13px] leading-snug transition-transform duration-200 group-hover:md:translate-x-1">
+              <span className="text-[13px] leading-snug transition-transform duration-200 group-hover:font-bold group-hover:md:translate-x-1">
                 {p.title}
               </span>
 
-              <span className="hidden whitespace-nowrap text-[11px] tracking-wide text-muted md:block">
+              <span className="hidden whitespace-nowrap text-[11px] tracking-wide text-muted group-hover:font-bold group-hover:text-ink md:block">
                 {p.scope}
               </span>
             </>
@@ -71,7 +71,7 @@ export function ProjectIndex({ projects }: { projects: Project[] }) {
       {/* Floating hover preview — fixed, desktop only */}
       <div
         aria-hidden
-        className={`pointer-events-none fixed right-[12%] top-28 z-40 hidden w-[420px] transition-all duration-300 md:block lg:right-[16%] lg:w-[500px] xl:right-[18%] xl:w-[580px] ${
+        className={`pointer-events-none fixed left-[18rem] top-28 z-40 hidden w-[400px] transition-all duration-300 md:block lg:w-[460px] xl:w-[520px] ${
           active && active.thumbnail
             ? "translate-y-0 opacity-100"
             : "translate-y-2 opacity-0"

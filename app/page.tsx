@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import { groupByYear } from "@/lib/projects";
 
 const introParagraphs: string[][] = [
@@ -28,36 +27,20 @@ export default function HomePage() {
   return (
     <section className="relative min-h-[100svh] overflow-hidden px-6 py-8 md:px-12 md:py-10 lg:px-16">
       {/* Left background illustration (decorative) */}
-      <div className="pointer-events-none absolute left-0 top-[14%] z-0 hidden w-[44%] max-w-[620px] md:block">
+      <div className="pointer-events-none absolute left-0 top-[14%] -z-10 hidden md:block">
         <Image
           src="/illust-bg.png"
           alt=""
           width={640}
           height={811}
           priority
-          className="h-auto w-full"
+          className="h-[700px] w-auto max-w-none"
         />
       </div>
 
       {/* Content */}
       <div className="relative z-10">
-        {/* Logo — top left */}
-        <Link
-          href="/"
-          aria-label="Studio Motian — Home"
-          className="inline-block"
-        >
-          <Image
-            src="/logo.png"
-            alt="Studio Motian"
-            width={1702}
-            height={306}
-            priority
-            className="h-7 w-auto md:h-9"
-          />
-        </Link>
-
-        <div className="mt-12 grid grid-cols-1 gap-12 md:mt-20 md:grid-cols-12 md:gap-6">
+        <div className="grid grid-cols-1 gap-12 pt-24 md:grid-cols-12 md:gap-6 md:pt-28">
           {/* Left — studio intro (not interactive) */}
           <div className="relative md:col-span-4 md:col-start-1 md:row-start-1">
             <div className="space-y-5 text-[13px] leading-[1.75] text-ink">

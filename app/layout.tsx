@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { SiteNav } from "@/components/site-nav";
 
@@ -50,7 +49,6 @@ export default function RootLayout({
   return (
     <html lang="ko" className={`${bastardus.variable} ${minSans.variable}`}>
       <body className="min-h-screen font-sans antialiased">
-        <Header />
         <SiteNav />
         <main>{children}</main>
         <Footer />

@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <>
-      <section className="container-x py-10">
+      <section className="container-x pb-10 pt-24 md:pt-28">
         <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm">
           <a href={`mailto:${CONTACT.email}`} className="link-underline">
             {CONTACT.email}

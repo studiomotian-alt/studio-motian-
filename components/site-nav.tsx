@@ -12,8 +12,9 @@ const navItems = [
 ];
 
 /**
- * Persistent site chrome — fixed on every page:
- * the right-side navigation and the bottom-right illustration.
+ * Persistent site chrome — fixed on every page so only the page content
+ * scrolls: the top-left logo, the right-side navigation, and the
+ * bottom-right illustration.
  */
 export function SiteNav() {
   const pathname = usePathname();
@@ -23,6 +24,23 @@ export function SiteNav() {
 
   return (
     <>
+      {/* Logo — fixed top-left */}
+      <Link
+        href="/"
+        aria-label="Studio Motian — Home"
+        className="fixed left-6 top-8 z-50 md:left-12 md:top-10 lg:left-16"
+      >
+        <Image
+          src="/logo.png"
+          alt="Studio Motian"
+          width={1702}
+          height={306}
+          priority
+          className="h-7 w-auto md:h-9"
+        />
+      </Link>
+
+      {/* Navigation — fixed top-right */}
       <nav className="fixed right-6 top-24 z-50 flex flex-col items-end gap-2 md:right-12 md:top-28 lg:right-16">
         {navItems.map((item) => (
           <Link
@@ -38,6 +56,7 @@ export function SiteNav() {
         ))}
       </nav>
 
+      {/* Illustration — fixed bottom-right */}
       <div
         aria-hidden
         className="pointer-events-none fixed bottom-6 right-4 -z-10 w-[150px] md:bottom-10 md:right-6 md:w-[240px]"

@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -83,35 +82,20 @@ export default function AboutPage() {
     <section
       className="relative min-h-[100svh] overflow-hidden px-6 py-8 md:px-12 md:py-10 lg:px-16"
     >
-      {/* Logo — top left */}
-      <Link
-        href="/"
-        aria-label="Studio Motian — Home"
-        className="relative z-10 inline-block"
-      >
+      {/* Left background illustration (decorative) — same height as home */}
+      <div className="pointer-events-none absolute left-0 top-[14%] -z-10 hidden md:block">
         <Image
-          src="/logo.png"
-          alt="Studio Motian"
-          width={1702}
-          height={306}
-          priority
-          className="h-7 w-auto md:h-9"
+          src="/about_bg.png"
+          alt=""
+          width={405}
+          height={719}
+          className="h-[700px] w-auto max-w-none"
         />
-      </Link>
+      </div>
 
-      <div className="relative z-10 mt-12 grid max-w-5xl grid-cols-1 gap-12 md:mt-20 md:grid-cols-10 md:gap-10">
+      <div className="relative z-10 grid max-w-5xl grid-cols-1 gap-12 pt-24 md:grid-cols-10 md:gap-10 md:pt-28">
         {/* Our Services — left, with faint background illustration */}
         <div className="relative md:col-span-4">
-          <div className="pointer-events-none absolute -top-10 -z-10 hidden md:-left-12 md:block md:w-[calc(100%+3rem)] lg:-left-16 lg:w-[calc(100%+4rem)]">
-            <Image
-              src="/about_bg.png"
-              alt=""
-              width={405}
-              height={719}
-              className="h-auto w-full"
-            />
-          </div>
-
           <h2 className="text-[15px] text-ink">Our Services</h2>
           <ul className="mt-8 space-y-7">
             {services.map((s) => (
