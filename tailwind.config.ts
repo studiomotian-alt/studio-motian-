@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const fontStack = [
+  "var(--font-bastardus)",
   "Pretendard Variable",
   "Pretendard",
   "Helvetica Neue",

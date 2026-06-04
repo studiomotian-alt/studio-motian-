@@ -10,7 +10,8 @@ export type Project = {
    * in next.config.mjs > images.remotePatterns.
    */
   thumbnail?: string;
-  behanceUrl: string;
+  /** Optional — when absent, the entry is shown as plain (non-clickable) text. */
+  behanceUrl?: string;
   featured?: boolean;
   /** Optional status shown on the right of the index, e.g. "in process". */
   status?: string;
@@ -93,6 +94,12 @@ export const projects: Project[] = [
       "https://www.behance.net/gallery/240185697/Market-Book-Vintage-Furniture-Brand",
   },
   {
+    slug: "bt-burger-taco",
+    year: "2025",
+    title: "BT BURGER & TACO",
+    category: "Brand Identity",
+  },
+  {
     slug: "nowhere",
     year: "2025",
     title: "NOWHERE",
@@ -143,6 +150,12 @@ export const projects: Project[] = [
       "https://www.behance.net/gallery/242742223/AVEC-Curated-Grocery-Branding",
   },
   {
+    slug: "hyewon-yanggwa",
+    year: "2025",
+    title: "Hyewon Yanggwa",
+    category: "Brand Identity",
+  },
+  {
     slug: "brick-bakers",
     year: "2025",
     title: "BRICK BAKERS",
@@ -162,6 +175,30 @@ export const projects: Project[] = [
     behanceUrl:
       "https://www.behance.net/gallery/244897049/Goyu-K-beauty-curated-shop-Branding",
     featured: true,
+  },
+  {
+    slug: "onit-house",
+    year: "2025",
+    title: "Onit House",
+    category: "Brand Identity",
+  },
+  {
+    slug: "house-oson",
+    year: "2025",
+    title: "House Oson",
+    category: "Brand Identity",
+  },
+  {
+    slug: "dalkom-on-baking",
+    year: "2025",
+    title: "Dalkom on Baking",
+    category: "Brand Identity",
+  },
+  {
+    slug: "dear-my-muffin",
+    year: "2025",
+    title: "Dear. My Muffin",
+    category: "Brand Identity",
   },
 
   // ── 2024 ──
@@ -195,6 +232,24 @@ export const projects: Project[] = [
     behanceUrl:
       "https://www.behance.net/gallery/240024845/Sogeum-dohwa-Cafe-Branding",
   },
+  {
+    slug: "bring-on",
+    year: "2024",
+    title: "Bring on",
+    category: "Brand Identity",
+  },
+  {
+    slug: "fall-in-football",
+    year: "2024",
+    title: "Fall in football",
+    category: "Brand Identity",
+  },
+  {
+    slug: "a-piece-of-cloud",
+    year: "2024",
+    title: "A piece of cloud",
+    category: "Brand Identity",
+  },
 
   // ── 2023 ──
   {
@@ -206,6 +261,18 @@ export const projects: Project[] = [
       "https://mir-s3-cdn-cf.behance.net/projects/808/121123233311155.Y3JvcCwzMzg5LDI2NTEsMzUyLDA.png",
     behanceUrl:
       "https://www.behance.net/gallery/233311155/Mogenic-Cafe-Branding",
+  },
+  {
+    slug: "a-part-of-me",
+    year: "2023",
+    title: "A part of me",
+    category: "Brand Identity",
+  },
+  {
+    slug: "bonding-market",
+    year: "2023",
+    title: "Bonding Market",
+    category: "Brand Identity",
   },
 ];
 
@@ -219,6 +286,23 @@ export function categoryParts(category: string): {
     scope: category.slice(0, i).trim(),
     industry: category.slice(i + 1).trim(),
   };
+}
+
+/** Group projects by year, newest year first, preserving array order within a year. */
+export function groupByYear(items: Project[] = projects): {
+  year: string;
+  projects: Project[];
+}[] {
+  const map = new Map<string, Project[]>();
+  for (const p of items) {
+    const y = p.year ?? "";
+    const arr = map.get(y);
+    if (arr) arr.push(p);
+    else map.set(y, [p]);
+  }
+  return [...map.entries()]
+    .sort((a, b) => b[0].localeCompare(a[0]))
+    .map(([year, group]) => ({ year, projects: group }));
 }
 
 export const featuredProjects = projects.filter((p) => p.featured);

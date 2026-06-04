@@ -1,7 +1,14 @@
 import type { Metadata } from "next";
+import localFont from "next/font/local";
 import "./globals.css";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+
+const bastardus = localFont({
+  src: "./fonts/BastardusSans.ttf",
+  variable: "--font-bastardus",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://studio-motian.com"),
@@ -33,7 +40,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ko">
+    <html lang="ko" className={bastardus.variable}>
       <body className="min-h-screen font-sans antialiased">
         <Header />
         <main>{children}</main>

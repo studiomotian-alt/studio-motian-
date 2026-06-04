@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { groupByYear } from "@/lib/projects";
 
 const introParagraphs: string[][] = [
   [
@@ -21,45 +22,6 @@ const introParagraphs: string[][] = [
   ["We pursue meaning over sensation, and sustainability over ornament."],
 ];
 
-const works: { year: string; items: string[] }[] = [
-  { year: "2026", items: ["GIP STUDIO", "CODA HOSTEL"] },
-  {
-    year: "2025",
-    items: [
-      "LOVEIT",
-      "Retaw",
-      "Ereonnal Bakery",
-      "BALANCE",
-      "Market Book",
-      "BT BUGER & TACO",
-      "NOWHERE",
-      "Orly Minbak",
-      "VANGWA",
-      "Truly Baker",
-      "AVEC",
-      "Hyewon Yanggwa",
-      "BRICK BAKERS",
-      "Goyu",
-      "Onit House",
-      "House Oson",
-      "Dalkom on Baking",
-      "Dear. My Muffin",
-    ],
-  },
-  {
-    year: "2024",
-    items: [
-      "Jigyo",
-      "ONE HIGH",
-      "Sogeum dohwa",
-      "Bring on",
-      "Fall in football",
-      "A piece of cloud",
-    ],
-  },
-  { year: "2023", items: ["Mogenic", "A part of me", "Bonding Market"] },
-];
-
 const nav = [
   { label: "HOME", href: "/" },
   { label: "ABOUT", href: "/about" },
@@ -68,6 +30,8 @@ const nav = [
 ];
 
 export default function HomePage() {
+  const years = groupByYear();
+
   return (
     <section className="relative min-h-[100svh] overflow-hidden px-6 py-8 md:px-12 md:py-10 lg:px-16">
       {/* Logo — top left */}
@@ -87,8 +51,8 @@ export default function HomePage() {
       </Link>
 
       <div className="mt-12 grid grid-cols-1 gap-12 md:mt-20 md:grid-cols-12 md:gap-6">
-        {/* Right nav — placed top-right on desktop, appears under logo on mobile */}
-        <nav className="flex flex-row gap-5 md:order-none md:col-span-2 md:col-start-11 md:row-start-1 md:flex-col md:items-end md:gap-2">
+        {/* Right nav — top-right on desktop, under logo on mobile */}
+        <nav className="flex flex-row gap-5 md:col-span-2 md:col-start-11 md:row-start-1 md:flex-col md:items-end md:gap-2">
           {nav.map((item) => (
             <Link
               key={item.href}
@@ -119,7 +83,7 @@ export default function HomePage() {
         {/* Center — year-grouped index (display only, not interactive) */}
         <div className="md:col-span-5 md:col-start-6 md:row-start-1">
           <div className="space-y-6">
-            {works.map((group) => (
+            {years.map((group) => (
               <div
                 key={group.year}
                 className="grid grid-cols-[3.5rem_1fr] gap-x-3"
@@ -128,12 +92,12 @@ export default function HomePage() {
                   {group.year}
                 </div>
                 <ul>
-                  {group.items.map((name) => (
+                  {group.projects.map((p) => (
                     <li
-                      key={name}
+                      key={p.slug}
                       className="text-[13px] leading-[1.7] text-ink"
                     >
-                      {name}
+                      {p.title}
                     </li>
                   ))}
                 </ul>

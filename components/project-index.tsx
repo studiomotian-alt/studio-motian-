@@ -4,6 +4,9 @@ import Image from "next/image";
 import { useState } from "react";
 import { categoryParts, type Project } from "@/lib/projects";
 
+const ROW_CLASS =
+  "group grid grid-cols-[2.75rem_1fr] items-baseline gap-3 py-1.5 text-ink md:grid-cols-[2.75rem_minmax(0,1fr)_auto_8rem] md:gap-6";
+
 export function ProjectIndex({ projects }: { projects: Project[] }) {
   const [hovered, setHovered] = useState<string | null>(null);
   const active = projects.find((p) => p.slug === hovered);
@@ -26,6 +29,26 @@ export function ProjectIndex({ projects }: { projects: Project[] }) {
           lastYear = p.year;
           const { scope, industry } = categoryParts(p.category);
 
+          const content = (
+            <>
+              <span className="text-[11px] tabular-nums tracking-wide">
+                {showYear ? p.year ?? "—" : ""}
+              </span>
+
+              <span className="text-[13px] leading-snug transition-transform duration-200 group-hover:md:translate-x-1">
+                {p.title}
+              </span>
+
+              <span className="hidden text-[11px] tracking-wide text-muted md:block">
+                {scope}
+              </span>
+
+              <span className="hidden text-right text-[11px] tracking-wide text-muted md:block">
+                {industry}
+              </span>
+            </>
+          );
+
           return (
             <li
               key={p.slug}
@@ -34,29 +57,19 @@ export function ProjectIndex({ projects }: { projects: Project[] }) {
                 setHovered((cur) => (cur === p.slug ? null : cur))
               }
             >
-              <a
-                href={p.behanceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group grid grid-cols-[2.75rem_1fr] items-baseline gap-3 py-1.5 text-ink md:grid-cols-[2.75rem_minmax(0,1fr)_auto_8rem] md:gap-6"
-                aria-label={`${p.title}${p.year ? ` (${p.year})` : ""} — ${p.category} — view on Behance`}
-              >
-                <span className="text-[11px] tabular-nums tracking-wide">
-                  {showYear ? p.year ?? "—" : ""}
-                </span>
-
-                <span className="text-[13px] leading-snug transition-transform duration-200 group-hover:md:translate-x-1">
-                  {p.title}
-                </span>
-
-                <span className="hidden text-[11px] tracking-wide text-muted md:block">
-                  {scope}
-                </span>
-
-                <span className="hidden text-right text-[11px] tracking-wide text-muted md:block">
-                  {industry}
-                </span>
-              </a>
+              {p.behanceUrl ? (
+                <a
+                  href={p.behanceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={ROW_CLASS}
+                  aria-label={`${p.title}${p.year ? ` (${p.year})` : ""} — ${p.category} — view on Behance`}
+                >
+                  {content}
+                </a>
+              ) : (
+                <div className={`${ROW_CLASS} cursor-default`}>{content}</div>
+              )}
             </li>
           );
         })}
