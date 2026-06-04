@@ -48,7 +48,7 @@ export function SiteNav() {
             key={item.href}
             href={item.href}
             aria-current={isActive(item.href) ? "page" : undefined}
-            className={`text-sm tracking-wide text-ink transition hover:opacity-60 ${
+            className={`text-[13px] tracking-wide text-ink transition hover:opacity-60 ${
               isActive(item.href) ? "font-bold" : ""
             }`}
           >
