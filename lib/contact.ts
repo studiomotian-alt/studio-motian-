@@ -1,6 +1,6 @@
 export const CONTACT = {
   email: "studio.motian@gmail.com",
-  kakaoUrl: "#",
+  kakaoUrl: "https://pf.kakao.com/_IxoxnWn",
   instagramUrl: "https://www.instagram.com/studio.motian/",
   behanceUrl: "https://www.behance.net/624687c7",
 };
