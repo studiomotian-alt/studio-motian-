@@ -2,22 +2,19 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { categoryParts, type Project } from "@/lib/projects";
+import type { Project } from "@/lib/projects";
 
 const ROW_CLASS =
-  "group grid grid-cols-[2.75rem_1fr] items-baseline gap-3 py-1.5 text-ink md:grid-cols-[2.75rem_minmax(0,1fr)_auto_8rem] md:gap-6";
+  "group grid grid-cols-[2.75rem_1fr] items-baseline gap-3 py-1.5 text-ink md:grid-cols-[2.75rem_minmax(0,1fr)_auto] md:gap-8";
 
 export function ProjectIndex({ projects }: { projects: Project[] }) {
   const [hovered, setHovered] = useState<string | null>(null);
   const active = projects.find((p) => p.slug === hovered);
 
-  // Sort by year descending; undated entries fall to the bottom.
-  // Order within the same year is preserved from the source array.
-  const sorted = [...projects].sort((a, b) => {
-    const ay = a.year ?? "0000";
-    const by = b.year ?? "0000";
-    return by.localeCompare(ay);
-  });
+  // Newest first, by "YYYY.MM" date.
+  const sorted = [...projects].sort((a, b) =>
+    (b.date ?? "").localeCompare(a.date ?? ""),
+  );
 
   let lastYear: string | undefined;
 
@@ -25,26 +22,22 @@ export function ProjectIndex({ projects }: { projects: Project[] }) {
     <div className="relative">
       <ul className="border-t border-line">
         {sorted.map((p) => {
-          const showYear = p.year !== lastYear;
-          lastYear = p.year;
-          const { scope, industry } = categoryParts(p.category);
+          const year = (p.date ?? "").slice(0, 4);
+          const showYear = year !== lastYear;
+          lastYear = year;
 
           const content = (
             <>
               <span className="text-[11px] tabular-nums tracking-wide">
-                {showYear ? p.year ?? "—" : ""}
+                {showYear ? year || "—" : ""}
               </span>
 
               <span className="text-[13px] leading-snug transition-transform duration-200 group-hover:md:translate-x-1">
                 {p.title}
               </span>
 
-              <span className="hidden text-[11px] tracking-wide text-muted md:block">
-                {scope}
-              </span>
-
-              <span className="hidden text-right text-[11px] tracking-wide text-muted md:block">
-                {industry}
+              <span className="hidden whitespace-nowrap text-[11px] tracking-wide text-muted md:block">
+                {p.scope}
               </span>
             </>
           );
@@ -63,7 +56,7 @@ export function ProjectIndex({ projects }: { projects: Project[] }) {
                   target="_blank"
                   rel="noopener noreferrer"
                   className={ROW_CLASS}
-                  aria-label={`${p.title}${p.year ? ` (${p.year})` : ""} — ${p.category} — view on Behance`}
+                  aria-label={`${p.title} — ${p.scope} — view on Behance`}
                 >
                   {content}
                 </a>
