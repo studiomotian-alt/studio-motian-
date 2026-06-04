@@ -1,4 +1,12 @@
+import Image from "next/image";
+import Link from "next/link";
 import type { Metadata } from "next";
+import localFont from "next/font/local";
+
+const minSans = localFont({
+  src: "../fonts/MinSans-ExtraLight.otf",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "About",
@@ -6,104 +14,173 @@ export const metadata: Metadata = {
     "Studio Motian designs the direction, language, and visual systems of brands.",
 };
 
-const philosophy = [
+const services = [
+  { num: "01", title: "Brand Strategy", desc: "브랜드의 방향과 기준을 정의합니다" },
+  { num: "02", title: "Brand Naming & Language", desc: "브랜드의 이름과 메시지를 설계합니다" },
+  { num: "03", title: "Visual Direction", desc: "브랜드의 시각적 방향을 설정합니다" },
+  { num: "04", title: "Brand Identity Design", desc: "브랜드의 시각 체계를 구축합니다" },
+  {
+    num: "05",
+    title: "Application Design",
+    desc: "브랜드가 적용되는 모든 접점을 디자인합니다",
+  },
+  {
+    num: "06",
+    title: "Brand Guideline",
+    desc: "브랜드가 일관되게 유지될 수 있도록 정리합니다",
+  },
+];
+
+const process = [
   {
     num: "01",
-    body: "A brand begins with a sentence — not decoration, but language that carries intent.",
+    name: "Define",
+    duration: "약 1주",
+    desc: "브랜드의 방향과 기준을 정리하는 단계",
+    items: [
+      "브랜드 인터뷰지 작성",
+      "대면 인터뷰 및 초기 미팅",
+      "브랜드 진단 및 리서치",
+      "프로젝트 범위 및 일정 확정",
+    ],
   },
   {
     num: "02",
-    body: "A brand gains meaning through repetition — across touchpoints, not in a single mark.",
+    name: "Develop",
+    duration: "약 2주",
+    desc: "브랜드의 전략과 방향을 구체화하는 단계",
+    items: [
+      "브랜드 전략 개발 및 제안",
+      "전략 수정 및 확정 (최대 1회)",
+      "네이밍 / 슬로건 개발 및 제안 (2안 제안 후 선택, 최대 1회 수정)",
+    ],
   },
   {
     num: "03",
-    body: "A brand must be used — designed for the real world, not just for a screen.",
+    name: "Design",
+    duration: "약 2-3주",
+    desc: "브랜드의 시각적 구조를 설계하는 단계",
+    items: [
+      "비주얼 디렉션 제안 (2안 / 대면 브리핑)",
+      "방향 선택 후 디벨롭 (최대 2회 수정)",
+      "로고 및 그래픽 시스템 확정",
+    ],
+  },
+  {
+    num: "04",
+    name: "Apply",
+    duration: "약 2-4주",
+    desc: "브랜드를 실제 접점에 적용하는 단계",
+    items: [
+      "어플리케이션 항목 확정",
+      "디자인 전개 (2안 제안 후 선택, 최대 2회 수정)",
+      "최종 디자인 정리 및 전달",
+    ],
   },
 ];
 
-const services = [
-  "Brand Strategy",
-  "Brand Naming & Language",
-  "Visual Direction",
-  "Brand Identity Design",
-  "Application Design",
-  "Brand Guideline",
-];
-
-const howWeWork = [
-  { num: "01", body: "Brand strategy first." },
-  { num: "02", body: "Before design, we define." },
-  { num: "03", body: "Designed for real use." },
-  { num: "04", body: "One brand, one experience." },
+const timeline = [
+  { label: "Brand Base", value: "약 7-8주" },
+  { label: "Brand Build", value: "약 10-12주" },
 ];
 
 export default function AboutPage() {
   return (
-    <>
-      <section className="container-x py-10">
-        <p className="max-w-md text-sm leading-[1.7] text-ink">
-          Studio Motian designs the direction, language, and visual systems of brands — starting from a small cue and extending into how the brand is used.
-        </p>
-      </section>
+    <section
+      className={`${minSans.className} relative min-h-[100svh] overflow-hidden px-6 py-8 md:px-12 md:py-10 lg:px-16`}
+    >
+      {/* Logo — top left */}
+      <Link
+        href="/"
+        aria-label="Studio Motian — Home"
+        className="relative z-10 inline-block"
+      >
+        <Image
+          src="/logo.png"
+          alt="Studio Motian"
+          width={1702}
+          height={306}
+          priority
+          className="h-7 w-auto md:h-9"
+        />
+      </Link>
 
-      <div className="hairline container-x" />
-
-      <section className="container-x py-10">
-        <div className="grid gap-4 md:grid-cols-12">
-          <div className="md:col-span-3">
-            <div className="eyebrow">Philosophy</div>
+      <div className="relative z-10 mt-12 grid max-w-5xl grid-cols-1 gap-12 md:mt-20 md:grid-cols-10 md:gap-10">
+        {/* Our Services — left, with faint background illustration */}
+        <div className="relative md:col-span-4">
+          <div className="pointer-events-none absolute -top-10 left-1/2 -z-10 hidden w-[125%] -translate-x-1/2 md:block">
+            <Image
+              src="/about_bg.png"
+              alt=""
+              width={405}
+              height={719}
+              className="h-auto w-full"
+            />
           </div>
-          <ol className="md:col-span-8 md:col-start-5">
-            {philosophy.map((p) => (
-              <li
-                key={p.num}
-                className="grid grid-cols-[2rem_1fr] gap-3 text-sm leading-[1.9] text-ink"
-              >
-                <span className="meta normal-case">{p.num}</span>
-                <span>{p.body}</span>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
 
-      <div className="hairline container-x" />
-
-      <section className="container-x py-10">
-        <div className="grid gap-4 md:grid-cols-12">
-          <div className="md:col-span-3">
-            <div className="eyebrow">Services</div>
-          </div>
-          <ul className="md:col-span-8 md:col-start-5">
+          <h2 className="text-[15px] text-ink">Our Services</h2>
+          <ul className="mt-8 space-y-7">
             {services.map((s) => (
-              <li key={s} className="text-sm leading-[1.9] text-ink">
-                {s}
+              <li key={s.num}>
+                <div className="flex items-baseline gap-3 text-[13px] text-ink">
+                  <span className="tabular-nums">{s.num}</span>
+                  <span className="text-muted">|</span>
+                  <span>{s.title}</span>
+                </div>
+                <p className="mt-1.5 text-[12px] text-muted">{s.desc}</p>
               </li>
             ))}
           </ul>
         </div>
-      </section>
 
-      <div className="hairline container-x" />
-
-      <section className="container-x py-10">
-        <div className="grid gap-4 md:grid-cols-12">
-          <div className="md:col-span-3">
-            <div className="eyebrow">How We Work</div>
-          </div>
-          <ol className="md:col-span-8 md:col-start-5">
-            {howWeWork.map((p) => (
-              <li
+        {/* Project Process — center */}
+        <div className="md:col-span-6">
+          <h2 className="text-[15px] text-ink">Project Process</h2>
+          <div className="mt-8 border-t border-line">
+            {process.map((p) => (
+              <div
                 key={p.num}
-                className="grid grid-cols-[2rem_1fr] gap-3 text-sm leading-[1.9] text-ink"
+                className="grid grid-cols-1 gap-3 border-b border-line py-5 md:grid-cols-[1fr_1.35fr] md:gap-8"
               >
-                <span className="meta normal-case">{p.num}</span>
-                <span>{p.body}</span>
-              </li>
+                <div>
+                  <div className="flex items-baseline gap-2 text-[13px] text-ink">
+                    <span className="tabular-nums">{p.num}</span>
+                    <span>{p.name}</span>
+                  </div>
+                  <div className="mt-1 text-[11px] text-muted">
+                    ({p.duration})
+                  </div>
+                  <div className="mt-3 text-[12px] text-muted">{p.desc}</div>
+                </div>
+
+                <ul className="space-y-1.5">
+                  {p.items.map((it) => (
+                    <li key={it} className="flex gap-2 text-[12px] text-ink">
+                      <span className="text-muted">•</span>
+                      <span>{it}</span>
+                    </li>
+                  ))}
+                  {p.num === "04" && (
+                    <li className="flex gap-2 pt-2 text-[12px] text-ink">
+                      <span className="text-muted">•</span>
+                      <div>
+                        <div>Project Timeline</div>
+                        <div className="mt-1 space-y-0.5 text-[11px] text-muted">
+                          {timeline.map((t) => (
+                            <div key={t.label}>
+                              {t.label}: {t.value}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </li>
+                  )}
+                </ul>
+              </div>
             ))}
-          </ol>
+          </div>
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }

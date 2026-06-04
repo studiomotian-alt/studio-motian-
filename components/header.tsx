@@ -16,9 +16,8 @@ export function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Home has its own in-page logo; the global SiteNav handles navigation
-  // on every page, so the header here only carries the logo.
-  if (pathname === "/") return null;
+  // Pages with their own in-page logo (home, about) hide the global header.
+  if (pathname === "/" || pathname === "/about") return null;
 
   return (
     <header

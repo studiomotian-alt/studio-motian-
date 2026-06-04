@@ -7,8 +7,8 @@ import { CONTACT } from "@/lib/contact";
 export function Footer() {
   const pathname = usePathname();
 
-  // Home is a standalone landing; hide the global footer there.
-  if (pathname === "/") return null;
+  // Standalone landing pages (home, about) hide the global footer.
+  if (pathname === "/" || pathname === "/about") return null;
 
   return (
     <footer className="mt-12 border-t border-line">
