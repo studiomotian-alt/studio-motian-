@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { ContactForm } from "@/components/contact-form";
-import { CONTACT } from "@/lib/contact";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -9,43 +8,17 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <>
-      <section className="container-x pb-10 pt-24 md:pt-28">
-        <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm">
-          <a href={`mailto:${CONTACT.email}`} className="link-underline">
-            {CONTACT.email}
-          </a>
-          <a
-            href={CONTACT.kakaoUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="link-underline"
-          >
-            Kakao
-          </a>
-          <a
-            href={CONTACT.instagramUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="link-underline"
-          >
-            Instagram
-          </a>
-        </div>
-      </section>
+    <section className="container-x pb-16 pt-40 md:pt-48">
+      <div className="max-w-2xl">
+        <h1 className="text-[15px] text-ink">Contact</h1>
+        <p className="mt-3 max-w-md text-[13px] leading-relaxed text-muted">
+          프로젝트 문의를 남겨주시면 영업일 기준 2–3일 내에 회신드립니다.
+        </p>
 
-      <div className="hairline container-x" />
-
-      <section className="container-x py-10">
-        <div className="grid gap-4 md:grid-cols-12">
-          <div className="md:col-span-3">
-            <div className="eyebrow">Inquiry</div>
-          </div>
-          <div className="md:col-span-8 md:col-start-5">
-            <ContactForm />
-          </div>
+        <div className="mt-12">
+          <ContactForm />
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }

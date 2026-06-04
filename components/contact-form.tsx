@@ -5,6 +5,10 @@ import { PROJECT_TYPES } from "@/lib/contact";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
+const LABEL = "block text-[11px] tracking-wide text-muted";
+const INPUT =
+  "mt-2 w-full border-0 border-b border-line bg-transparent py-2 text-[13px] text-ink outline-none transition-colors focus:border-ink";
+
 export function ContactForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
@@ -18,10 +22,12 @@ export function ContactForm() {
     const data = new FormData(form);
     const payload = {
       name: String(data.get("name") || "").trim(),
+      company: String(data.get("company") || "").trim(),
       contact: String(data.get("contact") || "").trim(),
+      email: String(data.get("email") || "").trim(),
       projectType: String(data.get("projectType") || "").trim(),
+      schedule: String(data.get("schedule") || "").trim(),
       message: String(data.get("message") || "").trim(),
-      reference: String(data.get("reference") || "").trim(),
       website: String(data.get("website") || "").trim(),
     };
 
@@ -33,9 +39,7 @@ export function ContactForm() {
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        throw new Error(
-          body?.error || "Something went wrong. Please try again.",
-        );
+        throw new Error(body?.error || "Something went wrong. Please try again.");
       }
       setStatus("success");
       form.reset();
@@ -47,21 +51,21 @@ export function ContactForm() {
 
   if (status === "success") {
     return (
-      <div className="text-sm text-ink">
-        <p>Message received.</p>
+      <div className="text-[13px] text-ink">
+        <p>문의가 접수되었습니다. 감사합니다.</p>
         <button
           type="button"
           onClick={() => setStatus("idle")}
-          className="link-underline mt-4"
+          className="link-underline mt-5 text-sm"
         >
-          Send another
+          Send another / 다시 작성
         </button>
       </div>
     );
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-5" noValidate>
+    <form onSubmit={onSubmit} className="space-y-7" noValidate>
       <div className="hidden" aria-hidden>
         <label>
           Website
@@ -69,47 +73,65 @@ export function ContactForm() {
         </label>
       </div>
 
-      <Field id="name" name="name" label="Name" required />
-      <Field id="contact" name="contact" label="Email or phone" required />
+      <div className="grid gap-7 sm:grid-cols-2">
+        <Field name="name" label="Name / 이름" required autoComplete="name" />
+        <Field
+          name="company"
+          label="Company or Brand / 회사명 또는 브랜드명"
+          autoComplete="organization"
+        />
+        <Field name="contact" label="Contact / 연락처" autoComplete="tel" />
+        <Field
+          name="email"
+          label="Email / 이메일"
+          type="email"
+          required
+          autoComplete="email"
+        />
 
-      <div>
-        <label htmlFor="projectType" className="eyebrow block">
-          Project type
-        </label>
-        <div className="mt-2 border-b border-line">
-          <select
-            id="projectType"
-            name="projectType"
-            required
-            defaultValue=""
-            className="w-full appearance-none border-0 bg-transparent py-2 text-sm text-ink outline-none focus:ring-0"
-          >
-            <option value="" disabled>
-              Select
-            </option>
-            {PROJECT_TYPES.map((t) => (
-              <option key={t} value={t}>
-                {t}
+        <div>
+          <label htmlFor="projectType" className={LABEL}>
+            Project Type / 문의 분야
+          </label>
+          <div className="border-b border-line">
+            <select
+              id="projectType"
+              name="projectType"
+              required
+              defaultValue=""
+              className="mt-2 w-full appearance-none border-0 bg-transparent py-2 text-[13px] text-ink outline-none focus:ring-0"
+            >
+              <option value="" disabled>
+                Select / 선택
               </option>
-            ))}
-          </select>
+              {PROJECT_TYPES.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
+
+        <Field
+          name="schedule"
+          label="Expected Schedule / 희망 일정"
+          placeholder="예: 2026 Q1"
+        />
       </div>
 
       <div>
-        <label htmlFor="message" className="eyebrow block">
-          Message
+        <label htmlFor="message" className={LABEL}>
+          Message / 문의 내용
         </label>
         <textarea
           id="message"
           name="message"
           required
           rows={5}
-          className="mt-2 w-full resize-none border-0 border-b border-line bg-transparent py-2 text-sm leading-relaxed text-ink outline-none placeholder:text-muted/70 focus:border-ink"
+          className="mt-2 w-full resize-none border-0 border-b border-line bg-transparent py-2 text-[13px] leading-relaxed text-ink outline-none placeholder:text-muted/70 focus:border-ink"
         />
       </div>
-
-      <Field id="reference" name="reference" label="Reference (optional)" />
 
       <div className="pt-2">
         <button
@@ -117,7 +139,7 @@ export function ContactForm() {
           disabled={status === "submitting"}
           className="link-underline text-sm disabled:opacity-50"
         >
-          {status === "submitting" ? "Sending…" : "Send"}
+          {status === "submitting" ? "Sending… / 전송 중" : "Send / 보내기"}
         </button>
       </div>
 
@@ -129,27 +151,33 @@ export function ContactForm() {
 }
 
 function Field({
-  id,
   name,
   label,
+  type = "text",
   required,
+  placeholder,
+  autoComplete,
 }: {
-  id: string;
   name: string;
   label: string;
+  type?: string;
   required?: boolean;
+  placeholder?: string;
+  autoComplete?: string;
 }) {
   return (
     <div>
-      <label htmlFor={id} className="eyebrow block">
+      <label htmlFor={name} className={LABEL}>
         {label}
       </label>
       <input
-        id={id}
+        id={name}
         name={name}
-        type="text"
+        type={type}
         required={required}
-        className="mt-2 w-full border-0 border-b border-line bg-transparent py-2 text-sm text-ink outline-none focus:border-ink"
+        placeholder={placeholder}
+        autoComplete={autoComplete}
+        className={`${INPUT} placeholder:text-muted/70`}
       />
     </div>
   );
