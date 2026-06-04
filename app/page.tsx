@@ -22,13 +22,6 @@ const introParagraphs: string[][] = [
   ["We pursue meaning over sensation, and sustainability over ornament."],
 ];
 
-const nav = [
-  { label: "HOME", href: "/" },
-  { label: "ABOUT", href: "/about" },
-  { label: "WORK", href: "/work" },
-  { label: "CONTACT", href: "/contact" },
-];
-
 export default function HomePage() {
   const years = groupByYear();
 
@@ -42,17 +35,6 @@ export default function HomePage() {
           width={640}
           height={811}
           priority
-          className="h-auto w-full"
-        />
-      </div>
-
-      {/* Bottom-right illustration (decorative) */}
-      <div className="pointer-events-none absolute bottom-[5%] right-[4%] z-0 w-[150px] md:w-[240px]">
-        <Image
-          src="/illust-shell.png"
-          alt=""
-          width={320}
-          height={180}
           className="h-auto w-full"
         />
       </div>
@@ -76,19 +58,6 @@ export default function HomePage() {
         </Link>
 
         <div className="mt-12 grid grid-cols-1 gap-12 md:mt-20 md:grid-cols-12 md:gap-6">
-          {/* Right nav — top-right on desktop, under logo on mobile */}
-          <nav className="flex flex-row gap-5 md:col-span-2 md:col-start-11 md:row-start-1 md:flex-col md:items-end md:gap-2">
-            {nav.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="text-sm tracking-wide text-ink transition hover:opacity-60"
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-
           {/* Left — studio intro (not interactive) */}
           <div className="relative md:col-span-4 md:col-start-1 md:row-start-1">
             <div className="space-y-5 text-[13px] leading-[1.75] text-ink">
