@@ -6,7 +6,7 @@ type Status = "idle" | "submitting" | "success" | "error";
 
 const LABEL = "block text-[11px] tracking-wide text-muted";
 const INPUT =
-  "mt-2 w-full border-0 border-b border-line bg-transparent py-2 text-[13px] text-ink outline-none transition-colors focus:border-ink";
+  "mt-1.5 w-full border-0 border-b border-line bg-transparent py-1.5 text-[13px] text-ink outline-none transition-colors focus:border-ink";
 
 export function ContactForm() {
   const [status, setStatus] = useState<Status>("idle");
@@ -64,7 +64,7 @@ export function ContactForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-7" noValidate>
+    <form onSubmit={onSubmit} className="space-y-5" noValidate>
       <div className="hidden" aria-hidden>
         <label>
           Website
@@ -72,7 +72,7 @@ export function ContactForm() {
         </label>
       </div>
 
-      <div className="grid gap-7 sm:grid-cols-2">
+      <div className="grid gap-x-6 gap-y-4 sm:grid-cols-2">
         <Field name="name" label="Name / 이름" required autoComplete="name" />
         <Field
           name="company"
@@ -110,8 +110,8 @@ export function ContactForm() {
           id="message"
           name="message"
           required
-          rows={5}
-          className="mt-2 w-full resize-none border-0 border-b border-line bg-transparent py-2 text-[13px] leading-relaxed text-ink outline-none placeholder:text-muted/70 focus:border-ink"
+          rows={4}
+          className="mt-1.5 w-full resize-none border-0 border-b border-line bg-transparent py-1.5 text-[13px] leading-relaxed text-ink outline-none placeholder:text-muted/70 focus:border-ink"
         />
       </div>
 
