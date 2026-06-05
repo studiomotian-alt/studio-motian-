@@ -93,7 +93,7 @@ export default function AboutPage() {
         />
       </div>
 
-      <div className="relative z-10 mt-40 grid max-w-5xl grid-cols-1 gap-12 border-t border-line pt-8 md:mt-48 md:grid-cols-10 md:gap-x-12">
+      <div className="relative z-10 mt-40 grid max-w-5xl grid-cols-1 gap-10 md:mt-48 md:grid-cols-10 md:gap-x-16">
         {/* Our Services — left, with faint background illustration */}
         <div className="relative md:col-span-4">
           <h2 className="text-[15px] text-ink">Our Services</h2>
@@ -111,8 +111,8 @@ export default function AboutPage() {
           </ul>
         </div>
 
-        {/* Project Process — center, separated by a vertical divider */}
-        <div className="md:col-span-6 md:border-l md:border-line md:pl-12">
+        {/* Project Process — mobile gets a top divider; desktop is a clean 2-column layout */}
+        <div className="border-t border-line pt-8 md:col-span-6 md:border-t-0 md:pt-0">
           <h2 className="text-[15px] text-ink">Project Process</h2>
           <div className="mt-8 border-t border-line">
             {process.map((p) => (
