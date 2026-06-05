@@ -28,14 +28,14 @@
      Touch / coarse pointers keep native behavior (they show no cursor anyway). */
   @media (hover: hover) and (pointer: fine) {
     body {
-      cursor: url("/cursor.png") 2 0, auto;
+      cursor: url("/cursor.png") 1 0, auto;
     }
     a,
     button,
     [role="button"],
     summary,
     label[for] {
-      cursor: url("/cursor.png") 2 0, pointer;
+      cursor: url("/cursor.png") 1 0, pointer;
     }
     input,
     textarea {
