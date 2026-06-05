@@ -42,7 +42,7 @@ export default function HomePage() {
       {/* Background video — desktop (xl+) only, tucked into the right empty area, subtle 50% */}
       <div
         aria-hidden
-        className="pointer-events-none absolute right-32 top-48 z-0 hidden aspect-video w-[22vw] max-w-[400px] overflow-hidden rounded-sm bg-cover bg-center opacity-50 xl:block 2xl:right-48"
+        className="pointer-events-none absolute right-32 top-48 z-0 hidden aspect-video h-[198px] overflow-hidden rounded-sm bg-cover bg-center opacity-20 xl:block 2xl:right-48"
         style={{ backgroundImage: "url(/motian_bg_poster.jpg)" }}
       >
         <video
