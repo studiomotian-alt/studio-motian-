@@ -25,7 +25,8 @@
   }
 
   /* Brand cursor — a tilted shell replaces the pointer on mouse devices.
-     Over clickable elements it swaps to a larger shell (cursor-hover.png) for feedback.
+     These native url() rules are the no-JS fallback; when components/cursor.tsx
+     mounts it adds .has-custom-cursor and takes over with a smooth scaling cursor.
      Touch / coarse pointers keep native behavior (they show no cursor anyway). */
   @media (hover: hover) and (pointer: fine) {
     body {
@@ -36,10 +37,21 @@
     [role="button"],
     summary,
     label[for] {
-      cursor: url("/cursor-hover.png") 1 0, pointer;
+      cursor: url("/cursor.png") 1 0, pointer;
     }
     input,
     textarea {
+      cursor: text;
+    }
+
+    /* When the JS smooth cursor is mounted, hide the native cursor everywhere
+       (but keep the text caret inside form fields). */
+    html.has-custom-cursor,
+    html.has-custom-cursor * {
+      cursor: none;
+    }
+    html.has-custom-cursor input:not([type="button"]):not([type="submit"]),
+    html.has-custom-cursor textarea {
       cursor: text;
     }
   }

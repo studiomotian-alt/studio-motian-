@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { SiteNav } from "@/components/site-nav";
+import { Cursor } from "@/components/cursor";
 
 const bastardus = localFont({
   src: "./fonts/BastardusSans.ttf",
@@ -50,6 +51,7 @@ export default function RootLayout({
       <body className="min-h-screen font-sans antialiased">
         <SiteNav />
         <main>{children}</main>
+        <Cursor />
       </body>
     </html>
   );
