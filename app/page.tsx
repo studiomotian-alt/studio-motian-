@@ -39,25 +39,6 @@ export default function HomePage() {
         />
       </div>
 
-      {/* Background video — desktop (xl+) only, tucked into the right empty area, subtle 50% */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute right-32 top-48 z-0 hidden aspect-video h-[198px] overflow-hidden rounded-sm bg-cover bg-center opacity-20 xl:block 2xl:right-48"
-        style={{ backgroundImage: "url(/motian_bg_poster.jpg)" }}
-      >
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          poster="/motian_bg_poster.jpg"
-          className="h-full w-full object-cover motion-reduce:hidden"
-        >
-          <source src="/motian_bg.webm" type="video/webm" />
-          <source src="/motian_bg.mp4" type="video/mp4" />
-        </video>
-      </div>
-
       {/* Content */}
       <div className="relative z-10">
         <div className="grid grid-cols-1 gap-12 pt-40 md:grid-cols-12 md:gap-6 md:pt-48">
