@@ -44,7 +44,9 @@ export default function HomePage() {
         <div className="grid grid-cols-1 gap-12 pt-40 md:grid-cols-12 md:gap-6 md:pt-48">
           {/* Left — studio intro (not interactive) */}
           <div className="relative md:col-span-4 md:col-start-1 md:row-start-1">
-            <div className="space-y-5 text-[13px] leading-[1.75] text-ink">
+            {/* Cap the text width to the background illustration's footprint (~552px box)
+                so it never overflows past the artwork on wide displays. */}
+            <div className="space-y-5 text-[13px] leading-[1.75] text-ink md:max-w-[500px]">
               {introParagraphs.map((para, i) => (
                 <p key={i}>
                   {para.map((line, j) => (
