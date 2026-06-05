@@ -5,10 +5,10 @@ import { useState } from "react";
 import type { Project } from "@/lib/projects";
 
 const ROW_CLASS =
-  "group grid grid-cols-[2.75rem_1fr] items-baseline gap-3 py-1.5 text-ink md:grid-cols-[2.75rem_15rem_11rem_14rem] md:gap-5";
+  "group grid grid-cols-[2.75rem_minmax(0,1fr)_auto] items-baseline gap-3 py-1.5 text-ink md:grid-cols-[2.75rem_15rem_11rem_14rem] md:gap-5";
 
 const META_CLASS =
-  "hidden whitespace-nowrap text-[11px] tracking-wide text-muted group-hover:font-bold group-hover:text-ink md:block";
+  "whitespace-nowrap text-[11px] tracking-wide text-muted group-hover:font-bold group-hover:text-ink";
 
 export function ProjectIndex({ projects }: { projects: Project[] }) {
   const [hovered, setHovered] = useState<string | null>(null);
@@ -39,9 +39,9 @@ export function ProjectIndex({ projects }: { projects: Project[] }) {
                 {p.title}
               </span>
 
-              {/* Industry, then scope (per layout spec) */}
+              {/* Industry (shown on mobile too), then scope (desktop only) */}
               <span className={META_CLASS}>{p.industry}</span>
-              <span className={META_CLASS}>{p.scope}</span>
+              <span className={`${META_CLASS} hidden md:block`}>{p.scope}</span>
             </>
           );
 

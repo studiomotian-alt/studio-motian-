@@ -93,7 +93,7 @@ export default function AboutPage() {
         />
       </div>
 
-      <div className="relative z-10 grid max-w-5xl grid-cols-1 gap-12 pt-40 md:grid-cols-10 md:gap-10 md:pt-48">
+      <div className="relative z-10 mt-40 grid max-w-5xl grid-cols-1 gap-12 border-t border-line pt-8 md:mt-48 md:grid-cols-10 md:gap-x-16">
         {/* Our Services — left, with faint background illustration */}
         <div className="relative md:col-span-4">
           <h2 className="text-[15px] text-ink">Our Services</h2>
