@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { groupByYear } from "@/lib/projects";
+import { CONTACT } from "@/lib/contact";
 
 const introParagraphs: string[][] = [
   [
@@ -81,6 +82,29 @@ export default function HomePage() {
               ))}
             </div>
           </div>
+        </div>
+
+        {/* Mobile-only contact footer — appears at the bottom of the home page */}
+        <div className="mt-16 flex flex-col items-start gap-3 md:hidden">
+          <div className="flex gap-2.5">
+            <a
+              href={CONTACT.behanceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="border border-ink px-4 py-1.5 text-[12px] text-ink transition hover:bg-ink hover:text-bg"
+            >
+              Behance
+            </a>
+            <a
+              href={CONTACT.instagramUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="border border-ink px-4 py-1.5 text-[12px] text-ink transition hover:bg-ink hover:text-bg"
+            >
+              Instagram
+            </a>
+          </div>
+          <div className="text-[11px] text-muted">E-mail: {CONTACT.email}</div>
         </div>
       </div>
     </section>
