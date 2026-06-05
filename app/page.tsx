@@ -27,20 +27,20 @@ export default function HomePage() {
   return (
     <section className="relative min-h-[100svh] overflow-hidden px-6 pb-12 md:px-12 md:pb-16 lg:px-16">
       {/* Left background illustration (decorative) */}
-      <div className="pointer-events-none absolute left-0 top-[14%] -z-10 hidden md:block">
+      <div className="pointer-events-none absolute left-0 top-[14%] -z-10">
         <Image
           src="/illust-bg.png"
           alt=""
           width={640}
           height={811}
           priority
-          className="h-[700px] w-auto max-w-none"
+          className="h-[440px] w-auto max-w-none md:h-[700px]"
         />
       </div>
 
       {/* Content */}
       <div className="relative z-10">
-        <div className="grid grid-cols-1 gap-12 pt-24 md:grid-cols-12 md:gap-6 md:pt-48">
+        <div className="grid grid-cols-1 gap-12 pt-28 md:grid-cols-12 md:gap-6 md:pt-48">
           {/* Left — studio intro (not interactive) */}
           <div className="relative md:col-span-4 md:col-start-1 md:row-start-1">
             <div className="space-y-5 text-[13px] leading-[1.75] text-ink">
