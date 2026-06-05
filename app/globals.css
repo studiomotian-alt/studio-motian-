@@ -24,18 +24,18 @@
     color: var(--ink);
   }
 
-  /* Brand cursor — the "Mo" monogram replaces the pointer on mouse devices.
+  /* Brand cursor — a tilted shell replaces the pointer on mouse devices.
      Touch / coarse pointers keep native behavior (they show no cursor anyway). */
   @media (hover: hover) and (pointer: fine) {
     body {
-      cursor: url("/cursor.png") 2 2, auto;
+      cursor: url("/cursor.png") 11 0, auto;
     }
     a,
     button,
     [role="button"],
     summary,
     label[for] {
-      cursor: url("/cursor.png") 2 2, pointer;
+      cursor: url("/cursor.png") 11 0, pointer;
     }
     input,
     textarea {
