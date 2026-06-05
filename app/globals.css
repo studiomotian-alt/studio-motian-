@@ -25,6 +25,7 @@
   }
 
   /* Brand cursor — a tilted shell replaces the pointer on mouse devices.
+     Over clickable elements it swaps to a larger shell (cursor-hover.png) for feedback.
      Touch / coarse pointers keep native behavior (they show no cursor anyway). */
   @media (hover: hover) and (pointer: fine) {
     body {
@@ -35,7 +36,7 @@
     [role="button"],
     summary,
     label[for] {
-      cursor: url("/cursor.png") 1 0, pointer;
+      cursor: url("/cursor-hover.png") 1 0, pointer;
     }
     input,
     textarea {
