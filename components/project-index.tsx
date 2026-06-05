@@ -64,7 +64,7 @@ export function ProjectIndex({ projects }: { projects: Project[] }) {
                   {content}
                 </a>
               ) : (
-                <div className={`${ROW_CLASS} cursor-default`}>{content}</div>
+                <div className={ROW_CLASS}>{content}</div>
               )}
             </li>
           );
