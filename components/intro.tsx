@@ -12,8 +12,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
  * (both handled by the inline boot script in app/layout.tsx).
  */
 const FADE_IN_MS = 1000; // video rises up over its first second (while playing)
-const FADE_OUT_MS = 600; // quicker fade out
-const FADE_LEAD = 1.2; // begin fading out this many seconds before the video ends
+const FADE_OUT_MS = 1300; // long, smooth glide out to the home screen
+const FADE_LEAD = 1.3; // begin fading out this many seconds before the video ends
 
 export function Intro() {
   const [show, setShow] = useState(false);
@@ -60,7 +60,7 @@ export function Intro() {
     <div
       onClick={dismiss}
       aria-hidden
-      className="fixed inset-0 z-[9991] flex cursor-pointer items-center justify-center transition-opacity ease-out"
+      className="fixed inset-0 z-[9991] flex cursor-pointer items-center justify-center transition-opacity"
       style={{
         opacity: out ? 0 : entered ? 1 : 0,
         transitionDuration: `${out ? FADE_OUT_MS : FADE_IN_MS}ms`,
