@@ -4,15 +4,16 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 /**
  * Session-once intro splash: a white screen with a small, subtle (50%) video.
- * The video fades IN over the (instantly-white, flash-free) cover, plays, and
- * the whole thing fades OUT starting shortly before the clip ends so the reveal
- * overlaps the last moment of the video for a smoother hand-off to the site.
+ * The video fades IN over ~1s while it plays, then the whole thing fades OUT
+ * starting well before the clip ends so the hand-off to the site feels quick
+ * and smooth (the video is also pre-trimmed front/back to ~2.9s).
  *
  * Skipped on repeat visits in the same session and for "reduce motion" users
  * (both handled by the inline boot script in app/layout.tsx).
  */
-const FADE_MS = 700;
-const FADE_LEAD = 0.8; // begin fading out this many seconds before the video ends
+const FADE_IN_MS = 1000; // video rises up over its first second (while playing)
+const FADE_OUT_MS = 600; // quicker fade out
+const FADE_LEAD = 1.2; // begin fading out this many seconds before the video ends
 
 export function Intro() {
   const [show, setShow] = useState(false);
@@ -29,7 +30,7 @@ export function Intro() {
     window.setTimeout(() => {
       root.classList.remove("mt-intro-on", "mt-intro-out", "mt-intro-lock");
       setShow(false);
-    }, FADE_MS + 60);
+    }, FADE_OUT_MS + 60);
   }, []);
 
   useEffect(() => {
@@ -41,7 +42,7 @@ export function Intro() {
     }
     setShow(true);
     const fadeIn = window.setTimeout(() => setEntered(true), 50); // paint at 0, then fade in
-    const safety = window.setTimeout(dismiss, 5500); // fallback if playback is blocked
+    const safety = window.setTimeout(dismiss, 4000); // fallback if playback is blocked
     return () => {
       window.clearTimeout(fadeIn);
       window.clearTimeout(safety);
@@ -62,7 +63,7 @@ export function Intro() {
       className="fixed inset-0 z-[9991] flex cursor-pointer items-center justify-center transition-opacity ease-out"
       style={{
         opacity: out ? 0 : entered ? 1 : 0,
-        transitionDuration: `${FADE_MS}ms`,
+        transitionDuration: `${out ? FADE_OUT_MS : FADE_IN_MS}ms`,
       }}
     >
       <video

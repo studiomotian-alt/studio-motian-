@@ -73,7 +73,7 @@
     background-color: #ffffff;
     z-index: 9990;
     pointer-events: none;
-    transition: opacity 700ms ease;
+    transition: opacity 600ms ease;
   }
   html.mt-intro-out #mt-intro-cover {
     opacity: 0;
