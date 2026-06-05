@@ -60,6 +60,28 @@
     background-color: #000000;
     color: #ffffff;
   }
+
+  /* Intro splash (session-once) — instant white cover (set before paint by the
+     inline boot script) that fades out when the intro video finishes. */
+  #mt-intro-cover {
+    display: none;
+  }
+  html.mt-intro-on #mt-intro-cover {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background-color: #ffffff;
+    z-index: 9990;
+    pointer-events: none;
+    transition: opacity 700ms ease;
+  }
+  html.mt-intro-out #mt-intro-cover {
+    opacity: 0;
+  }
+  html.mt-intro-lock,
+  html.mt-intro-lock body {
+    overflow: hidden;
+  }
 }
 
 @layer components {

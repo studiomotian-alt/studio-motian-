@@ -3,6 +3,11 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { SiteNav } from "@/components/site-nav";
 import { Cursor } from "@/components/cursor";
+import { Intro } from "@/components/intro";
+
+// Runs before first paint: shows the intro splash once per session (and never
+// for "reduce motion" users), adding a flash-free white cover via .mt-intro-on.
+const INTRO_BOOT = `(function(){try{var d=document.documentElement;if(!sessionStorage.getItem('mt_intro')&&!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)){d.classList.add('mt-intro-on','mt-intro-lock');}}catch(e){}})();`;
 
 const bastardus = localFont({
   src: "./fonts/BastardusSans.ttf",
@@ -47,10 +52,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ko" className={`${bastardus.variable} ${minSans.variable}`}>
+    <html
+      lang="ko"
+      className={`${bastardus.variable} ${minSans.variable}`}
+      suppressHydrationWarning
+    >
       <body className="min-h-screen font-sans antialiased">
+        <script dangerouslySetInnerHTML={{ __html: INTRO_BOOT }} />
         <SiteNav />
         <main>{children}</main>
+        <div id="mt-intro-cover" aria-hidden />
+        <Intro />
         <Cursor />
       </body>
     </html>
