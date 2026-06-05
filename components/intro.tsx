@@ -3,23 +3,28 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 /**
- * Session-once intro splash: a white screen with a small, subtle (50%) video.
- * The video fades IN over ~1s while it plays, then the whole thing fades OUT
- * starting well before the clip ends so the hand-off to the site feels quick
- * and smooth (the video is also pre-trimmed front/back to ~2.9s).
+ * Session-once intro splash: a white screen with a small, subtle (50%) video
+ * that fades in while it plays, then glides out to reveal the site.
+ *
+ * Mobile-safe autoplay: instead of relying on the `autoPlay` attribute (React
+ * applies `muted` too late, so iOS shows a play button and blocks it), we set
+ * `muted` on the element and call play() ourselves. The video only fades in once
+ * playback actually starts, so a play button is never shown; if autoplay is
+ * genuinely blocked (e.g. Low Power Mode) we skip straight to the site.
  *
  * Skipped on repeat visits in the same session and for "reduce motion" users
  * (both handled by the inline boot script in app/layout.tsx).
  */
-const FADE_IN_MS = 1000; // video rises up over its first second (while playing)
-const FADE_OUT_MS = 1300; // long, smooth glide out to the home screen
+const FADE_IN_MS = 1000;
+const FADE_OUT_MS = 1300;
 const FADE_LEAD = 1.3; // begin fading out this many seconds before the video ends
 
 export function Intro() {
   const [show, setShow] = useState(false);
-  const [entered, setEntered] = useState(false); // false → fade in from 0
-  const [out, setOut] = useState(false); // true → fade out
+  const [entered, setEntered] = useState(false); // becomes true only once playback starts
+  const [out, setOut] = useState(false);
   const dismissing = useRef(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const dismiss = useCallback(() => {
     if (dismissing.current) return;
@@ -41,13 +46,26 @@ export function Intro() {
       /* private mode — show once anyway */
     }
     setShow(true);
-    const fadeIn = window.setTimeout(() => setEntered(true), 50); // paint at 0, then fade in
-    const safety = window.setTimeout(dismiss, 4000); // fallback if playback is blocked
-    return () => {
-      window.clearTimeout(fadeIn);
-      window.clearTimeout(safety);
-    };
+    const safety = window.setTimeout(dismiss, 4000); // last-resort fallback
+    return () => window.clearTimeout(safety);
   }, [dismiss]);
+
+  // Reliable muted autoplay (incl. iOS): set the muted property, then play().
+  useEffect(() => {
+    if (!show) return;
+    const v = videoRef.current;
+    if (!v) return;
+    v.muted = true;
+    v.defaultMuted = true;
+    const start = v.play();
+    if (start && typeof start.then === "function") {
+      start
+        .then(() => requestAnimationFrame(() => setEntered(true)))
+        .catch(() => dismiss()); // autoplay blocked → skip straight to the site
+    } else {
+      requestAnimationFrame(() => setEntered(true));
+    }
+  }, [show, dismiss]);
 
   const onTimeUpdate = (e: React.SyntheticEvent<HTMLVideoElement>) => {
     const v = e.currentTarget;
@@ -67,9 +85,11 @@ export function Intro() {
       }}
     >
       <video
+        ref={videoRef}
         autoPlay
         muted
         playsInline
+        preload="auto"
         onTimeUpdate={onTimeUpdate}
         onEnded={dismiss}
         poster="/motian_bg_poster.jpg"
