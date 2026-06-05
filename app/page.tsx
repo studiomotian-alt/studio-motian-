@@ -40,7 +40,7 @@ export default function HomePage() {
 
       {/* Content */}
       <div className="relative z-10">
-        <div className="grid grid-cols-1 gap-12 pt-32 md:grid-cols-12 md:gap-6 md:pt-48">
+        <div className="grid grid-cols-1 gap-12 pt-40 md:grid-cols-12 md:gap-6 md:pt-48">
           {/* Left — studio intro (not interactive) */}
           <div className="relative md:col-span-4 md:col-start-1 md:row-start-1">
             <div className="space-y-5 text-[13px] leading-[1.75] text-ink">

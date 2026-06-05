@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function WorkPage() {
   return (
-    <section className="container-x pb-10 pt-32 md:pt-48">
+    <section className="container-x pb-10 pt-40 md:pt-48">
       <ProjectIndex projects={projects} />
     </section>
   );
