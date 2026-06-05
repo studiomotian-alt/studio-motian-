@@ -41,8 +41,8 @@ export function SiteNav() {
         />
       </Link>
 
-      {/* Navigation — fixed top-right, aligned with the content top */}
-      <nav className="fixed right-6 top-40 z-50 flex flex-col items-end gap-10 md:right-12 md:top-48 lg:right-16">
+      {/* Navigation — horizontal top bar on mobile, vertical right column on desktop */}
+      <nav className="fixed inset-x-0 top-0 z-40 flex flex-row items-center justify-end gap-5 border-b border-line bg-white/80 px-6 py-5 backdrop-blur-sm md:inset-x-auto md:right-12 md:top-48 md:flex-col md:items-end md:gap-10 md:border-0 md:bg-transparent md:p-0 md:backdrop-blur-none lg:right-16">
         {navItems.map((item) => (
           <Link
             key={item.href}
