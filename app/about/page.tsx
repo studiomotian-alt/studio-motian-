@@ -114,11 +114,11 @@ export default function AboutPage() {
         {/* Project Process — mobile gets a top divider; desktop is a clean 2-column layout */}
         <div className="border-t border-line pt-8 md:col-span-6 md:border-t-0 md:pt-0">
           <h2 className="text-[15px] text-ink">Project Process</h2>
-          <div className="mt-8 border-t border-line">
+          <div className="mt-8 md:border-t md:border-line">
             {process.map((p) => (
               <div
                 key={p.num}
-                className="grid grid-cols-1 gap-3 border-b border-line py-5 md:grid-cols-[1fr_1.35fr] md:gap-8"
+                className="grid grid-cols-1 gap-3 py-5 md:grid-cols-[1fr_1.35fr] md:gap-8 md:border-b md:border-line"
               >
                 <div>
                   <div className="flex items-baseline gap-2 text-[13px] text-ink">
