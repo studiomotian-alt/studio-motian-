@@ -42,7 +42,7 @@ export function SiteNav() {
       </Link>
 
       {/* Navigation — horizontal bar below the logo on mobile, vertical right column on desktop */}
-      <nav className="fixed inset-x-0 top-0 z-40 flex flex-row items-center justify-end gap-5 border-b border-line bg-white/80 px-6 pb-3 pt-[72px] backdrop-blur-sm md:inset-x-auto md:right-12 md:top-48 md:flex-col md:items-end md:gap-10 md:border-0 md:bg-transparent md:p-0 md:backdrop-blur-none lg:right-16">
+      <nav className="fixed inset-x-0 top-0 z-40 flex flex-row items-center justify-between bg-white/80 px-6 pb-3 pt-24 backdrop-blur-sm md:inset-x-auto md:right-12 md:top-48 md:flex-col md:items-end md:justify-start md:gap-10 md:bg-transparent md:p-0 md:backdrop-blur-none lg:right-16">
         {navItems.map((item) => (
           <Link
             key={item.href}
