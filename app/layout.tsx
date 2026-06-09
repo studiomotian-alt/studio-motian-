@@ -23,7 +23,7 @@ const minSans = localFont({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://studio-motian.vercel.app"),
+  metadataBase: new URL("https://studiomotian.com"),
   title: {
     default: "Studio Motian — From a mote of language, to the structure of intent.",
     template: "%s · Studio Motian",
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     title: "Studio Motian",
     description:
       "From a mote of language, to the structure of intent. — Studio Motian은 브랜드의 방향과 언어, 시각 시스템을 설계합니다.",
-    url: "https://studio-motian.vercel.app",
+    url: "https://studiomotian.com",
     siteName: "Studio Motian",
     locale: "ko_KR",
     type: "website",
