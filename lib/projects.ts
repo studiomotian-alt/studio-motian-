@@ -23,6 +23,17 @@ const BI = "Brand Identity";
 export const projects: Project[] = [
   // ── 2026 ──
   {
+    slug: "poesie-papier",
+    date: "2026.04",
+    title: "Poésie Papier",
+    scope: BSBI,
+    industry: "Lifestyle Brand",
+    thumbnail:
+      "https://mir-s3-cdn-cf.behance.net/projects/808/e6ddff251125909.Y3JvcCwzMTM3LDI0NTMsMTA4LDg1.jpg",
+    behanceUrl:
+      "https://www.behance.net/gallery/251125909/Poesie-Papier-Lifestyle-Brand-Branding",
+  },
+  {
     slug: "coda-hostel",
     date: "2026.04",
     title: "CODA HOSTEL",
