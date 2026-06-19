@@ -140,7 +140,17 @@ export const projects: Project[] = [
     behanceUrl:
       "https://www.behance.net/gallery/241628829/Ereonnal-Bakery-Cafe-Branding",
   },
-  { slug: "bt-burger-taco", date: "2025.05", title: "BT BURGER & TACO", scope: BSBI, industry: "F&B Franchise" },
+  {
+    slug: "bt-burger-taco",
+    date: "2025.05",
+    title: "BT BURGER & TACO",
+    scope: BSBI,
+    industry: "F&B Franchise",
+    thumbnail:
+      "https://mir-s3-cdn-cf.behance.net/projects/808/db1d5f251378975.Y3JvcCw1MTAxLDM5ODksMCwxNDAx.jpg",
+    behanceUrl:
+      "https://www.behance.net/gallery/251378975/BT-Burger-Taco-Restaurant-Franchise-Branding",
+  },
   {
     slug: "nowhere",
     date: "2025.05",
