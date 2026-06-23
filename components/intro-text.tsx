@@ -16,6 +16,7 @@ const DUR = 1350; // travel time, each way (gentle)
 const EASE = "cubic-bezier(0.6, 0, 0.25, 1)"; // smooth ease-in-out
 const STAGGER = 150; // small radial stagger from the centre (focal point)
 const SHELL_SCALE = 1.15; // shell height vs the copy block — > 1 spreads the letters wider
+const VOFFSET_FRAC = 0.12; // nudge the formed shell down a touch (fraction of block height)
 
 type Geom = {
   cw: number;
@@ -68,7 +69,7 @@ export function IntroText({ paragraphs }: { paragraphs: string[][] }) {
     const shellH = g.ch * SHELL_SCALE;
     const shellW = shellH * SHELL_ASPECT;
     const sl = (g.cw - shellW) / 2;
-    const st = (g.ch - shellH) / 2;
+    const st = (g.ch - shellH) / 2 + g.ch * VOFFSET_FRAC;
     const maxDist = Math.hypot(cx, cy) || 1;
 
     root.querySelectorAll<HTMLElement>(".mt-char").forEach((el, i) => {
