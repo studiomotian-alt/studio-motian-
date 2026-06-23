@@ -15,7 +15,8 @@ import { SHELL_POINTS, SHELL_ASPECT } from "@/lib/shell-points";
 const DUR = 1350; // travel time, each way (gentle)
 const EASE = "cubic-bezier(0.6, 0, 0.25, 1)"; // smooth ease-in-out
 const STAGGER = 150; // small radial stagger from the centre (focal point)
-const SHELL_SCALE = 1.15; // shell height vs the copy block — > 1 spreads the letters wider
+const BOX_W_FRAC = 1.08; // shell contain-fits within this fraction of the copy block width…
+const BOX_H_FRAC = 1.2; // …and this fraction of its height (preserves aspect, any orientation)
 const VOFFSET_FRAC = 0.12; // nudge the formed shell down a touch (fraction of block height)
 
 type Geom = {
@@ -66,8 +67,14 @@ export function IntroText({ paragraphs }: { paragraphs: string[][] }) {
 
     const cx = g.cw / 2;
     const cy = g.ch / 2;
-    const shellH = g.ch * SHELL_SCALE;
-    const shellW = shellH * SHELL_ASPECT;
+    const boxW = g.cw * BOX_W_FRAC;
+    const boxH = g.ch * BOX_H_FRAC;
+    let shellW = boxW;
+    let shellH = boxW / SHELL_ASPECT;
+    if (shellH > boxH) {
+      shellH = boxH;
+      shellW = boxH * SHELL_ASPECT;
+    }
     const sl = (g.cw - shellW) / 2;
     const st = (g.ch - shellH) / 2 + g.ch * VOFFSET_FRAC;
     const maxDist = Math.hypot(cx, cy) || 1;
