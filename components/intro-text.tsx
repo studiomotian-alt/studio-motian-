@@ -1,113 +1,78 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { Fragment, useRef } from "react";
 
 /**
- * Studio intro copy with a hover "assemble" motion: on mouse-enter the letters
- * dissolve into ASCII/code-like noise (disorder) and then lock into place from
- * top-left to bottom-right (order) — echoing Motian's idea of building a logical
- * structure up from fragments. Punctuation, digits-in-labels and spaces are kept
- * so the *structure* stays legible while the words resolve.
- *
- * The real text is always what React renders (SSR-friendly / accessible); the
- * scramble only mutates textContent imperatively during the animation.
+ * Studio intro copy with a hover "assemble" motion: on mouse-enter every letter
+ * scatters to a random position/rotation (disorder) and then settles back into
+ * its real place in a top-to-bottom wave (order) — the *same* letters the whole
+ * time, never gibberish. Echoes Motian building a logical structure from
+ * fragments. Transforms only, so the text layout never reflows.
  */
-const GLYPHS =
-  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz/\\|+=<>*·:—".split("");
-const DURATION = 1400; // ms — full assemble time
-
-const scrambleable = (ch: string) => /[A-Za-z]/.test(ch);
+const SETTLE_MS = 640; // per-letter travel time
+const STAGGER_MS = 760; // spread of start times across the text (the "wave")
 
 export function IntroText({ paragraphs }: { paragraphs: string[][] }) {
-  const lineRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const containerRef = useRef<HTMLDivElement>(null);
   const running = useRef(false);
-  const rafId = useRef(0);
-
-  useEffect(() => () => cancelAnimationFrame(rafId.current), []);
-
-  // Flat index for each rendered line.
-  const offsets: number[] = [];
-  let acc = 0;
-  for (const p of paragraphs) {
-    offsets.push(acc);
-    acc += p.length;
-  }
-  const flatLines = paragraphs.flat();
 
   const start = () => {
-    if (running.current) return;
+    const root = containerRef.current;
+    if (!root || running.current) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     running.current = true;
 
-    const total = flatLines.reduce((s, l) => s + l.length, 0);
-    const settle: number[][] = [];
-    let g = 0;
-    for (const line of flatLines) {
-      const arr: number[] = [];
-      for (let i = 0; i < line.length; i++) {
-        const base = (g / total) * DURATION * 0.55;
-        const jitter = Math.random() * DURATION * 0.45;
-        arr.push(base + jitter);
-        g++;
-      }
-      settle.push(arr);
-    }
+    const chars = root.querySelectorAll<HTMLElement>(".mt-char");
+    const n = chars.length || 1;
+    chars.forEach((el, i) => {
+      const dx = (Math.random() * 2 - 1) * 52;
+      const dy = (Math.random() * 2 - 1) * 34;
+      const rot = (Math.random() * 2 - 1) * 26;
+      const delay = (i / n) * STAGGER_MS + Math.random() * 150;
+      el.animate(
+        [
+          { transform: `translate(${dx}px, ${dy}px) rotate(${rot}deg)` },
+          { transform: "translate(0, 0) rotate(0deg)" },
+        ],
+        {
+          duration: SETTLE_MS,
+          delay,
+          easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+          fill: "backwards", // hold the scattered state during the stagger delay
+        },
+      );
+    });
 
-    const t0 = performance.now();
-    const frame = (now: number) => {
-      const t = now - t0;
-      const step = Math.floor(t / 45); // glyph cycle speed
-      let done = true;
-      for (let li = 0; li < flatLines.length; li++) {
-        const el = lineRefs.current[li];
-        if (!el) continue;
-        const real = flatLines[li];
-        let out = "";
-        for (let i = 0; i < real.length; i++) {
-          const ch = real[i];
-          if (!scrambleable(ch) || t >= settle[li][i]) {
-            out += ch;
-          } else {
-            done = false;
-            out += GLYPHS[(step + i * 7 + li * 13) % GLYPHS.length];
-          }
-        }
-        el.textContent = out;
-      }
-      if (!done && t < DURATION + 250) {
-        rafId.current = requestAnimationFrame(frame);
-      } else {
-        for (let li = 0; li < flatLines.length; li++) {
-          const el = lineRefs.current[li];
-          if (el) el.textContent = flatLines[li];
-        }
-        running.current = false;
-      }
-    };
-    rafId.current = requestAnimationFrame(frame);
+    window.setTimeout(() => {
+      running.current = false;
+    }, STAGGER_MS + SETTLE_MS + 300);
   };
 
   return (
     <div
+      ref={containerRef}
       onMouseEnter={start}
       className="space-y-5 text-[13px] leading-[1.75] text-ink md:max-w-[500px]"
     >
       {paragraphs.map((para, pi) => (
         <p key={pi}>
-          {para.map((line, li) => {
-            const idx = offsets[pi] + li;
-            return (
-              <span
-                key={li}
-                ref={(el) => {
-                  lineRefs.current[idx] = el;
-                }}
-                className="block"
-              >
-                {line}
-              </span>
-            );
-          })}
+          {para.map((line, li) => (
+            <span key={li} className="block">
+              {line.split(" ").map((word, wi, arr) => (
+                <Fragment key={wi}>
+                  {/* a word is a no-wrap unit; letters inside scatter individually */}
+                  <span className="inline-block whitespace-nowrap">
+                    {Array.from(word).map((ch, ci) => (
+                      <span key={ci} className="mt-char inline-block">
+                        {ch}
+                      </span>
+                    ))}
+                  </span>
+                  {wi < arr.length - 1 ? " " : null}
+                </Fragment>
+              ))}
+            </span>
+          ))}
         </p>
       ))}
     </div>
