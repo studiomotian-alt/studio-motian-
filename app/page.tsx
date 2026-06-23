@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { groupByYear } from "@/lib/projects";
 import { CONTACT } from "@/lib/contact";
+import { IntroText } from "@/components/intro-text";
 
 const introParagraphs: string[][] = [
   [
@@ -42,21 +43,11 @@ export default function HomePage() {
       {/* Content */}
       <div className="relative z-10">
         <div className="grid grid-cols-1 gap-12 pt-40 md:grid-cols-12 md:gap-6 md:pt-48">
-          {/* Left — studio intro (not interactive) */}
+          {/* Left — studio intro. Hover triggers an "assemble from noise" motion.
+              Width is capped (~500px) inside IntroText so it never overflows the
+              background artwork on wide displays. */}
           <div className="relative md:col-span-4 md:col-start-1 md:row-start-1">
-            {/* Cap the text width to the background illustration's footprint (~552px box)
-                so it never overflows past the artwork on wide displays. */}
-            <div className="space-y-5 text-[13px] leading-[1.75] text-ink md:max-w-[500px]">
-              {introParagraphs.map((para, i) => (
-                <p key={i}>
-                  {para.map((line, j) => (
-                    <span key={j} className="block">
-                      {line}
-                    </span>
-                  ))}
-                </p>
-              ))}
-            </div>
+            <IntroText paragraphs={introParagraphs} />
           </div>
 
           {/* Center — year-grouped index (display only, not interactive) */}
