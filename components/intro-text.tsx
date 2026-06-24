@@ -7,10 +7,11 @@ import { SHELL_POINTS, SHELL_S, SHELL_ASPECT } from "@/lib/shell-points";
  * Studio intro copy with a hover "shell" motion. The shell is a fixed thick
  * nautilus (앵무조개) spiral of points. On hover the letters flow in along curved,
  * galaxy-like paths and settle onto those points. Held there, the POINTS never
- * move — only the letters do: each keeps gliding to a neighbouring point, trading
- * places with its neighbour, like characters streaming through fixed slots. The
- * shape itself never wobbles. When the pointer leaves, the letters stream back
- * out along the same curves and disperse into the sentences.
+ * move and the letters never glide — instead the letter occupying each point is
+ * swapped, instantly, with another, the way the characters on an LED signboard
+ * (전광판) flip from one to the next. The shape stands perfectly still while its
+ * text reshuffles. When the pointer leaves, the letters stream back out along the
+ * same curves and disperse into the sentences.
  *
  * Desktop / fine-pointer only; transforms only, never reflow.
  */
@@ -20,10 +21,8 @@ const BOX_W_FRAC = 1.06; // spiral contain-fits within this fraction of the bloc
 const BOX_H_FRAC = 1.2; // …and this fraction of its height
 const VOFFSET_FRAC = 0.08; // nudge the formed shell down a touch
 const CURVE = 0.34; // how far the inflow paths bow (galaxy swirl), as a fraction of distance
-const SWAP_MIN = 950; // ms — slowest / fastest a single place-trade takes
-const SWAP_MAX = 2100;
-const ACTIVE = 0.32; // fraction of letters trading places at any moment (lively, streaming)
-const KNN = 7; // a letter only ever trades with one of its nearest points
+const FLIPS_PER_SEC = 110; // how many letter-pairs flip places each second while held
+const KNN = 10; // a letter only ever flips with one of its nearest points
 
 const N = SHELL_POINTS.length;
 
@@ -46,11 +45,10 @@ const NEIGH: number[][] = (() => {
 
 const easeInOut = (t: number) =>
   t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-const rnd = (a: number, b: number) => a + Math.random() * (b - a);
 
 type Geom = { cw: number; ch: number; pos: { x: number; y: number }[] };
 type Shell = { sl: number; st: number; sw: number; sh: number };
-type L = { rx: number; ry: number; home: number; from: number; to: number; t: number; dur: number; swap: boolean };
+type L = { rx: number; ry: number; home: number };
 
 export function IntroText({ paragraphs }: { paragraphs: string[][] }) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -59,7 +57,7 @@ export function IntroText({ paragraphs }: { paragraphs: string[][] }) {
   const shell = useRef<Shell | null>(null);
   const letters = useRef<L[]>([]);
   const occupant = useRef<Int32Array>(new Int32Array(0));
-  const active = useRef(0);
+  const flipBudget = useRef(0);
   const hovering = useRef(false);
   const progress = useRef(0); // 0 = sentences, 1 = shell
   const raf = useRef(0);
@@ -90,11 +88,11 @@ export function IntroText({ paragraphs }: { paragraphs: string[][] }) {
       const home = order[k % order.length];
       occ[home] = k;
       const r = geom.current!.pos[k];
-      return { rx: r.x, ry: r.y, home, from: home, to: home, t: 0, dur: 0, swap: false };
+      return { rx: r.x, ry: r.y, home };
     });
     occupant.current = occ;
     letters.current = ls;
-    active.current = 0;
+    flipBudget.current = 0;
   };
 
   useEffect(() => {
@@ -127,47 +125,27 @@ export function IntroText({ paragraphs }: { paragraphs: string[][] }) {
     };
   };
 
-  // keep a gentle number of letters trading places among the fixed points
-  const trade = () => {
+  // flip `count` letters to a neighbouring point, instantly (전광판-style)
+  const flip = (count: number) => {
     const ls = letters.current;
     const occ = occupant.current;
     const n = ls.length;
-    const cap = Math.floor(n * ACTIVE);
-    let attempts = 0;
-    while (active.current < cap && attempts < 40) {
-      attempts++;
+    for (let c = 0; c < count; c++) {
       const i = (Math.random() * n) | 0;
       const Li = ls[i];
-      if (Li.swap) continue;
       const nb = NEIGH[Li.home];
       const p = nb[(Math.random() * nb.length) | 0];
       const who = occ[p];
-      const dur = rnd(SWAP_MIN, SWAP_MAX);
       if (who === -1) {
         occ[Li.home] = -1;
-        Li.from = Li.home;
-        Li.to = p;
         Li.home = p;
         occ[p] = i;
-        Li.t = 0;
-        Li.dur = dur;
-        Li.swap = true;
-        active.current += 1;
-      } else if (who !== i && !ls[who].swap) {
-        const Lj = ls[who];
+      } else if (who !== i) {
         const a = Li.home;
-        Li.from = a;
-        Li.to = p;
-        Li.home = p;
-        occ[p] = i;
-        Lj.from = p;
-        Lj.to = a;
-        Lj.home = a;
         occ[a] = who;
-        Li.t = Lj.t = 0;
-        Li.dur = Lj.dur = dur;
-        Li.swap = Lj.swap = true;
-        active.current += 2;
+        occ[p] = i;
+        Li.home = p;
+        ls[who].home = a;
       }
     }
   };
@@ -188,42 +166,24 @@ export function IntroText({ paragraphs }: { paragraphs: string[][] }) {
     const ls = letters.current;
     const occ = occupant.current;
 
-    // advance place-trades; once the shell is formed, keep new ones flowing
-    for (let k = 0; k < ls.length; k++) {
-      const L = ls[k];
-      if (L.swap) {
-        L.t += dt / L.dur;
-        if (L.t >= 1) {
-          L.t = 1;
-          L.swap = false;
-          L.from = L.to = L.home;
-          active.current -= 1;
-        }
+    // once the shell is fully formed, flip letters between fixed points — instantly
+    if (hovering.current && raw > 0.97 && occ.length) {
+      flipBudget.current += (FLIPS_PER_SEC / 1000) * dt;
+      const c = Math.floor(flipBudget.current);
+      if (c > 0) {
+        flip(c);
+        flipBudget.current -= c;
       }
     }
-    if (hovering.current && raw > 0.85 && occ.length) trade();
 
     const span = 1 - STAGGER;
     if (g && sh) {
       for (let i = 0; i < chars.length; i++) {
         const L = ls[i];
         if (!L) continue;
-        // current point (gliding between two fixed points if trading)
-        let nx: number;
-        let ny: number;
-        if (L.swap) {
-          const e = easeInOut(L.t);
-          const a = SHELL_POINTS[L.from];
-          const b = SHELL_POINTS[L.to];
-          nx = a[0] + (b[0] - a[0]) * e;
-          ny = a[1] + (b[1] - a[1]) * e;
-        } else {
-          const p = SHELL_POINTS[L.home];
-          nx = p[0];
-          ny = p[1];
-        }
-        const sx = sh.sl + nx * sh.sw;
-        const sy = sh.st + ny * sh.sh;
+        const p = SHELL_POINTS[L.home];
+        const sx = sh.sl + p[0] * sh.sw;
+        const sy = sh.st + p[1] * sh.sh;
 
         // formation amount for this letter (mild wave by spiral position)
         let pl = (raw - SHELL_S[L.home] * STAGGER) / span;
