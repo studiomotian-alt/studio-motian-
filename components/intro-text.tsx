@@ -1,43 +1,65 @@
 "use client";
 
 import { Fragment, useEffect, useRef } from "react";
-import { SHELL_POINTS, SHELL_S, SHELL_NRM, SHELL_ASPECT } from "@/lib/shell-points";
+import { SHELL_POINTS, SHELL_S, SHELL_ASPECT } from "@/lib/shell-points";
 
 /**
- * Studio intro copy with a hover "shell" motion. While the pointer is over the
- * copy, the letters flow onto a THICK nautilus (앵무조개) spiral — drawing on in
- * order along the curve, like a wave, so the band fills from its coil outward.
- * Inside the band the letters sit at shading densities, darker in the coil and
- * fading outward (음영). Once formed, a slow long-wavelength ripple travels the
- * spiral so the whole ribbon sways gently — smooth and wistful, never choppy or
- * jittery. When the pointer leaves, the wave recedes back into the sentences.
+ * Studio intro copy with a hover "shell" motion. The shell is a fixed thick
+ * nautilus (앵무조개) spiral of points. On hover the letters flow in along curved,
+ * galaxy-like paths and settle onto those points. Held there, the POINTS never
+ * move — only the letters do: each keeps gliding to a neighbouring point, trading
+ * places with its neighbour, like characters streaming through fixed slots. The
+ * shape itself never wobbles. When the pointer leaves, the letters stream back
+ * out along the same curves and disperse into the sentences.
  *
  * Desktop / fine-pointer only; transforms only, never reflow.
  */
-const DUR = 2200; // master draw in / out timeline (ms) — slow + smooth
-const STAGGER = 0.78; // share of the timeline the draw-on wave is spread over
+const DUR = 2400; // master flow in / out timeline (ms) — slow + graceful
+const STAGGER = 0.35; // mild spread so the inflow reads as one stream, not a sprinkle
 const BOX_W_FRAC = 1.06; // spiral contain-fits within this fraction of the block width…
 const BOX_H_FRAC = 1.2; // …and this fraction of its height
 const VOFFSET_FRAC = 0.08; // nudge the formed shell down a touch
-const WAVE_AMP = 6; // px — gentle ribbon sway while held
-const WAVE_N = 1.1; // crests along the whole spiral (low = long, smooth wave)
-const WAVE_SPEED = 0.0013; // rad/ms — how fast the sway travels (slow = dreamy)
+const CURVE = 0.34; // how far the inflow paths bow (galaxy swirl), as a fraction of distance
+const SWAP_MIN = 1700; // ms — slowest / fastest a single place-trade takes
+const SWAP_MAX = 3500;
+const ACTIVE = 0.13; // fraction of letters trading places at any moment (gentle stream)
+const KNN = 7; // a letter only ever trades with one of its nearest points
 
 const N = SHELL_POINTS.length;
 
-type Geom = { cw: number; ch: number; pos: { x: number; y: number }[] };
-type Shell = { sl: number; st: number; sw: number; sh: number };
-type Slot = { i: number; s: number; nx: number; ny: number };
+// nearest points for every point, so place-trades stay local and gentle
+const NEIGH: number[][] = (() => {
+  const out: number[][] = [];
+  for (let i = 0; i < N; i++) {
+    const d: { j: number; v: number }[] = [];
+    for (let j = 0; j < N; j++) {
+      if (j === i) continue;
+      const dx = SHELL_POINTS[i][0] - SHELL_POINTS[j][0];
+      const dy = SHELL_POINTS[i][1] - SHELL_POINTS[j][1];
+      d.push({ j, v: dx * dx + dy * dy });
+    }
+    d.sort((a, b) => a.v - b.v);
+    out.push(d.slice(0, KNN).map((o) => o.j));
+  }
+  return out;
+})();
 
 const easeInOut = (t: number) =>
   t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+const rnd = (a: number, b: number) => a + Math.random() * (b - a);
+
+type Geom = { cw: number; ch: number; pos: { x: number; y: number }[] };
+type Shell = { sl: number; st: number; sw: number; sh: number };
+type L = { rx: number; ry: number; home: number; from: number; to: number; t: number; dur: number; swap: boolean };
 
 export function IntroText({ paragraphs }: { paragraphs: string[][] }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const charsRef = useRef<HTMLElement[]>([]);
   const geom = useRef<Geom | null>(null);
   const shell = useRef<Shell | null>(null);
-  const slot = useRef<Slot[]>([]);
+  const letters = useRef<L[]>([]);
+  const occupant = useRef<Int32Array>(new Int32Array(0));
+  const active = useRef(0);
   const hovering = useRef(false);
   const progress = useRef(0); // 0 = sentences, 1 = shell
   const raf = useRef(0);
@@ -57,13 +79,22 @@ export function IntroText({ paragraphs }: { paragraphs: string[][] }) {
         return { x: r.left + r.width / 2 - cr.left, y: r.top + r.height / 2 - cr.top };
       }),
     };
-    const n = chars.length || 1;
-    // spread the letters evenly across every point of the thick band (keeps the shading)
-    slot.current = chars.map((_, k) => {
-      const i = Math.round((k * (N - 1)) / Math.max(1, n - 1));
-      const nrm = SHELL_NRM[i] || [0, 0];
-      return { i, s: SHELL_S[i] ?? 0, nx: nrm[0], ny: nrm[1] };
+    // give every letter a distinct home point
+    const order = SHELL_POINTS.map((_, i) => i);
+    for (let i = order.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [order[i], order[j]] = [order[j], order[i]];
+    }
+    const occ = new Int32Array(N).fill(-1);
+    const ls: L[] = chars.map((_, k) => {
+      const home = order[k % order.length];
+      occ[home] = k;
+      const r = geom.current!.pos[k];
+      return { rx: r.x, ry: r.y, home, from: home, to: home, t: 0, dur: 0, swap: false };
     });
+    occupant.current = occ;
+    letters.current = ls;
+    active.current = 0;
   };
 
   useEffect(() => {
@@ -96,6 +127,51 @@ export function IntroText({ paragraphs }: { paragraphs: string[][] }) {
     };
   };
 
+  // keep a gentle number of letters trading places among the fixed points
+  const trade = () => {
+    const ls = letters.current;
+    const occ = occupant.current;
+    const n = ls.length;
+    const cap = Math.floor(n * ACTIVE);
+    let attempts = 0;
+    while (active.current < cap && attempts < 40) {
+      attempts++;
+      const i = (Math.random() * n) | 0;
+      const Li = ls[i];
+      if (Li.swap) continue;
+      const nb = NEIGH[Li.home];
+      const p = nb[(Math.random() * nb.length) | 0];
+      const who = occ[p];
+      const dur = rnd(SWAP_MIN, SWAP_MAX);
+      if (who === -1) {
+        occ[Li.home] = -1;
+        Li.from = Li.home;
+        Li.to = p;
+        Li.home = p;
+        occ[p] = i;
+        Li.t = 0;
+        Li.dur = dur;
+        Li.swap = true;
+        active.current += 1;
+      } else if (who !== i && !ls[who].swap) {
+        const Lj = ls[who];
+        const a = Li.home;
+        Li.from = a;
+        Li.to = p;
+        Li.home = p;
+        occ[p] = i;
+        Lj.from = p;
+        Lj.to = a;
+        Lj.home = a;
+        occ[a] = who;
+        Li.t = Lj.t = 0;
+        Li.dur = Lj.dur = dur;
+        Li.swap = Lj.swap = true;
+        active.current += 2;
+      }
+    }
+  };
+
   const tick = (now: number) => {
     const dt = now - lastT.current;
     lastT.current = now;
@@ -109,23 +185,62 @@ export function IntroText({ paragraphs }: { paragraphs: string[][] }) {
     const chars = charsRef.current;
     const g = geom.current;
     const sh = shell.current;
-    const sl = slot.current;
+    const ls = letters.current;
+    const occ = occupant.current;
+
+    // advance place-trades; once the shell is formed, keep new ones flowing
+    for (let k = 0; k < ls.length; k++) {
+      const L = ls[k];
+      if (L.swap) {
+        L.t += dt / L.dur;
+        if (L.t >= 1) {
+          L.t = 1;
+          L.swap = false;
+          L.from = L.to = L.home;
+          active.current -= 1;
+        }
+      }
+    }
+    if (hovering.current && raw > 0.85 && occ.length) trade();
+
     const span = 1 - STAGGER;
     if (g && sh) {
       for (let i = 0; i < chars.length; i++) {
-        const rest = g.pos[i];
-        const sp = sl[i];
-        if (!rest || !sp) continue;
-        // wave of formation runs along the spiral (coil centre first, outer last)
-        let pl = (raw - sp.s * STAGGER) / span;
+        const L = ls[i];
+        if (!L) continue;
+        // current point (gliding between two fixed points if trading)
+        let nx: number;
+        let ny: number;
+        if (L.swap) {
+          const e = easeInOut(L.t);
+          const a = SHELL_POINTS[L.from];
+          const b = SHELL_POINTS[L.to];
+          nx = a[0] + (b[0] - a[0]) * e;
+          ny = a[1] + (b[1] - a[1]) * e;
+        } else {
+          const p = SHELL_POINTS[L.home];
+          nx = p[0];
+          ny = p[1];
+        }
+        const sx = sh.sl + nx * sh.sw;
+        const sy = sh.st + ny * sh.sh;
+
+        // formation amount for this letter (mild wave by spiral position)
+        let pl = (raw - SHELL_S[L.home] * STAGGER) / span;
         pl = pl < 0 ? 0 : pl > 1 ? 1 : pl;
         const pe = easeInOut(pl);
-        // slow long-wavelength ribbon sway, along the band normal
-        const wave = Math.sin(sp.s * WAVE_N * Math.PI * 2 - now * WAVE_SPEED) * WAVE_AMP;
-        const p = SHELL_POINTS[sp.i];
-        const tx = sh.sl + p[0] * sh.sw + sp.nx * wave;
-        const ty = sh.st + p[1] * sh.sh + sp.ny * wave;
-        chars[i].style.transform = `translate(${(tx - rest.x) * pe}px, ${(ty - rest.y) * pe}px)`;
+
+        // curved (galaxy-swirl) path from the sentence to the shell point
+        const dx = sx - L.rx;
+        const dy = sy - L.ry;
+        const plen = Math.hypot(dx, dy) || 1;
+        const camt = CURVE * plen;
+        const cx = (L.rx + sx) / 2 + (-dy / plen) * camt;
+        const cy = (L.ry + sy) / 2 + (dx / plen) * camt;
+        const u = 1 - pe;
+        const bx = u * u * L.rx + 2 * u * pe * cx + pe * pe * sx;
+        const by = u * u * L.ry + 2 * u * pe * cy + pe * pe * sy;
+        chars[i].style.transform = `translate(${bx - L.rx}px, ${by - L.ry}px)`;
       }
     }
 
