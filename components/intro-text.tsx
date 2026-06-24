@@ -5,23 +5,25 @@ import { SHELL_POINTS, SHELL_ASPECT } from "@/lib/shell-points";
 
 /**
  * Studio intro copy with a hover "shell" motion. While the pointer is over the
- * copy, every letter glides out of the sentences and threads itself onto the
- * nautilus (앵무조개) spiral — Motian's motif — then keeps *streaming* slowly
- * along that line, like characters flowing around a contour. The shape holds the
- * whole time; only the letters travel. A soft fade at the path ends hides the
- * point where the line wraps from the outer tip back to the centre. When the
- * pointer leaves, the letters drift home into the readable sentences.
+ * copy, the letters draw themselves — in path order, centre outward — onto the
+ * nautilus (앵무조개) outline traced from the studio's reference shell, building
+ * the shape the way Motian builds a brand: structure, accreted. Once formed they
+ * keep *streaming* slowly along the contour, like characters flowing around a
+ * line; the shape holds, only the letters travel. A soft fade hides the point
+ * where the path wraps from the aperture back to the centre. When the pointer
+ * leaves, the shape un-draws (outer whorl first) back into the sentences.
  *
  * Desktop / fine-pointer only; transforms + opacity only, never reflow. Rest
  * positions are measured once (and on resize / after fonts load) so the running
  * animation never corrupts the maths.
  */
-const DUR = 1350; // fly in / out, each way (ms)
+const DUR = 1900; // master fly in / out timeline (ms) — slow + lyrical
+const STAGGER = 0.73; // share of the timeline spent drawing letters on in path order
 const BOX_W_FRAC = 1.08; // spiral contain-fits within this fraction of the block width…
 const BOX_H_FRAC = 1.2; // …and this fraction of its height
 const VOFFSET_FRAC = 0.12; // nudge the formed shell down a touch
 const FLOW_SPEED = 0.019; // path-points per ms — slow, calm streaming along the line
-const FADE = 0.07; // fraction of the path at each end where letters fade out / in
+const FADE = 0.045; // fraction of the path at each end where letters fade out / in
 
 const N = SHELL_POINTS.length;
 
@@ -100,7 +102,7 @@ export function IntroText({ paragraphs }: { paragraphs: string[][] }) {
     const step = dt / DUR;
     if (progress.current < goal) progress.current = Math.min(goal, progress.current + step);
     else if (progress.current > goal) progress.current = Math.max(goal, progress.current - step);
-    const p = easeInOut(progress.current);
+    const raw = progress.current; // 0 = sentences, 1 = fully formed shell
 
     flow.current += FLOW_SPEED * dt; // keep the line streaming
 
@@ -109,9 +111,15 @@ export function IntroText({ paragraphs }: { paragraphs: string[][] }) {
     const s = shell.current;
     const base = param.current;
     if (g && s) {
+      const span = 1 - STAGGER;
       for (let i = 0; i < chars.length; i++) {
         const rest = g.pos[i];
         if (!rest) continue;
+        // each letter draws on in path order (centre first, outer whorl last)
+        const home = base[i] / N; // 0..1 home position along the path
+        let pl = (raw - home * STAGGER) / span;
+        pl = pl < 0 ? 0 : pl > 1 ? 1 : pl;
+        const pe = easeInOut(pl);
         let q = (base[i] + flow.current) % N;
         if (q < 0) q += N;
         const i0 = Math.floor(q);
@@ -121,11 +129,11 @@ export function IntroText({ paragraphs }: { paragraphs: string[][] }) {
         const b = SHELL_POINTS[i1];
         const px = s.sl + (a[0] + (b[0] - a[0]) * f) * s.sw;
         const py = s.st + (a[1] + (b[1] - a[1]) * f) * s.sh;
-        chars[i].style.transform = `translate(${(px - rest.x) * p}px, ${(py - rest.y) * p}px)`;
-        // fade only the few letters crossing the centre<->tip wrap
+        chars[i].style.transform = `translate(${(px - rest.x) * pe}px, ${(py - rest.y) * pe}px)`;
+        // fade only the few letters crossing the aperture<->centre wrap
         const u = q / N;
         const endFade = Math.min(Math.min(u, 1 - u) / FADE, 1);
-        chars[i].style.opacity = `${1 - (1 - endFade) * p}`;
+        chars[i].style.opacity = `${1 - (1 - endFade) * pe}`;
       }
     }
 
@@ -151,6 +159,7 @@ export function IntroText({ paragraphs }: { paragraphs: string[][] }) {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     if (!geom.current) measure();
     computeShell();
+    if (progress.current < 0.01) flow.current = 0; // fresh formation draws cleanly from the centre
     hovering.current = true;
     startLoop();
   };
