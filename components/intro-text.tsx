@@ -5,50 +5,47 @@ import { SHELL_POINTS, SHELL_ASPECT } from "@/lib/shell-points";
 
 /**
  * Studio intro copy with a hover "shell" motion. While the pointer is over the
- * copy, the letters scatter out of the sentences and settle onto a FIXED field of
- * points shaped like the studio's reference nautilus (앵무조개). The points never
- * move; instead the letters slowly trade places among them — each drifting to a
- * neighbouring point and on to the next — so the shell holds while the text keeps
- * rearranging itself, wistful and dreamlike (아련·몽환). No letter ever dances in
- * place. When the pointer leaves, the letters scatter back into the sentences.
+ * copy, the letters draw themselves onto a nautilus (앵무조개) spiral — in order,
+ * from the coil's centre outward, like a wave running along the curve rather than
+ * a scatter. Once formed, a slow transverse ripple travels the spiral so the line
+ * undulates gently (물결), wistful and smooth — never jittery, never busy. When the
+ * pointer leaves, the wave recedes and the letters settle back into the sentences.
  *
  * Desktop / fine-pointer only; transforms only, never reflow.
  */
-const DUR = 1700; // scatter in / out timeline (ms)
-const STAGGER = 0.6; // share of the timeline spread across the letters' starts
-const BOX_W_FRAC = 1.0; // shell contain-fits within this fraction of the block width…
-const BOX_H_FRAC = 1.15; // …and this fraction of its height
-const VOFFSET_FRAC = 0.08; // nudge the formed shell down a touch
-const CURVE = 14; // px — gentle bow on each letter's scatter path
-const MIG_MIN = 2600; // ms — slowest / fastest a single drift between points takes
-const MIG_MAX = 5200;
-const KNN = 7; // a letter drifts to one of this many nearest points
+const DUR = 2200; // master draw in / out timeline (ms) — slow + smooth
+const STAGGER = 0.82; // share of the timeline spread along the path (a tight wave)
+const BOX_W_FRAC = 1.04; // spiral contain-fits within this fraction of the block width…
+const BOX_H_FRAC = 1.18; // …and this fraction of its height
+const VOFFSET_FRAC = 0.1; // nudge the formed shell down a touch
+const WAVE_AMP = 7; // px — transverse ripple amplitude while held
+const WAVE_N = 2.5; // number of ripple crests along the spiral
+const WAVE_SPEED = 0.0016; // rad/ms — how fast the ripple travels (slow = dreamy)
 
 const N = SHELL_POINTS.length;
 
-// Nearest neighbours for every fixed point, so drift hops stay short and gentle.
-const NEIGH: number[][] = (() => {
-  const out: number[][] = [];
+// Per-point unit normal (in aspect-correct space) so the ripple pushes each letter
+// cleanly perpendicular to the spiral, and its 0..1 position along the path.
+const NORMAL: { px: number; py: number; s: number }[] = (() => {
+  const ax = SHELL_POINTS.map((p) => p[0] * SHELL_ASPECT);
+  const ay = SHELL_POINTS.map((p) => p[1]);
+  const out: { px: number; py: number; s: number }[] = [];
   for (let i = 0; i < N; i++) {
-    const d: { j: number; v: number }[] = [];
-    for (let j = 0; j < N; j++) {
-      if (j === i) continue;
-      const dx = SHELL_POINTS[i][0] - SHELL_POINTS[j][0];
-      const dy = SHELL_POINTS[i][1] - SHELL_POINTS[j][1];
-      d.push({ j, v: dx * dx + dy * dy });
-    }
-    d.sort((a, b) => a.v - b.v);
-    out.push(d.slice(0, KNN).map((o) => o.j));
+    const a = Math.max(0, i - 1);
+    const b = Math.min(N - 1, i + 1);
+    let tx = ax[b] - ax[a];
+    let ty = ay[b] - ay[a];
+    const len = Math.hypot(tx, ty) || 1;
+    tx /= len;
+    ty /= len;
+    out.push({ px: -ty, py: tx, s: i / (N - 1) });
   }
   return out;
 })();
 
-const rnd = (lo: number, hi: number) => lo + Math.random() * (hi - lo);
-const pick = <T,>(arr: T[]) => arr[Math.floor(Math.random() * arr.length)];
-
 type Geom = { cw: number; ch: number; pos: { x: number; y: number }[] };
 type Shell = { sl: number; st: number; sw: number; sh: number };
-type Mig = { a: number; b: number; t: number; dur: number; delay: number; cx: number; cy: number };
+type Slot = { i: number; s: number; px: number; py: number };
 
 const easeInOut = (t: number) =>
   t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
@@ -58,7 +55,7 @@ export function IntroText({ paragraphs }: { paragraphs: string[][] }) {
   const charsRef = useRef<HTMLElement[]>([]);
   const geom = useRef<Geom | null>(null);
   const shell = useRef<Shell | null>(null);
-  const mig = useRef<Mig[]>([]);
+  const slot = useRef<Slot[]>([]);
   const hovering = useRef(false);
   const progress = useRef(0); // 0 = sentences, 1 = shell
   const raf = useRef(0);
@@ -78,25 +75,12 @@ export function IntroText({ paragraphs }: { paragraphs: string[][] }) {
         return { x: r.left + r.width / 2 - cr.left, y: r.top + r.height / 2 - cr.top };
       }),
     };
-    // give every letter a distinct starting point, then a drift target + a path bow
-    const order = SHELL_POINTS.map((_, i) => i);
-    for (let i = order.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [order[i], order[j]] = [order[j], order[i]];
-    }
-    mig.current = chars.map((_, i) => {
-      const a = order[i % order.length];
-      const ang = Math.random() * Math.PI * 2;
-      const amt = (0.4 + Math.random() * 0.6) * CURVE;
-      return {
-        a,
-        b: pick(NEIGH[a]),
-        t: Math.random(),
-        dur: rnd(MIG_MIN, MIG_MAX),
-        delay: Math.random(),
-        cx: Math.cos(ang) * amt,
-        cy: Math.sin(ang) * amt,
-      };
+    const n = chars.length || 1;
+    // map each letter, in reading order, to an evenly-spaced point along the spiral
+    slot.current = chars.map((_, k) => {
+      const i = Math.round((k * (N - 1)) / Math.max(1, n - 1));
+      const nrm = NORMAL[i];
+      return { i, s: nrm.s, px: nrm.px, py: nrm.py };
     });
   };
 
@@ -142,39 +126,24 @@ export function IntroText({ paragraphs }: { paragraphs: string[][] }) {
 
     const chars = charsRef.current;
     const g = geom.current;
-    const s = shell.current;
-    const ms = mig.current;
+    const sh = shell.current;
+    const sl = slot.current;
     const span = 1 - STAGGER;
-    if (g && s) {
+    if (g && sh) {
       for (let i = 0; i < chars.length; i++) {
         const rest = g.pos[i];
-        const m = ms[i];
-        if (!rest || !m) continue;
-
-        // advance the slow drift from point a -> point b (then on to the next)
-        m.t += dt / m.dur;
-        if (m.t >= 1) {
-          m.t = 0;
-          m.a = m.b;
-          m.b = pick(NEIGH[m.a]);
-          m.dur = rnd(MIG_MIN, MIG_MAX);
-        }
-        const e = easeInOut(m.t);
-        const pa = SHELL_POINTS[m.a];
-        const pb = SHELL_POINTS[m.b];
-        const nx = pa[0] + (pb[0] - pa[0]) * e;
-        const ny = pa[1] + (pb[1] - pa[1]) * e;
-        const tx = s.sl + nx * s.sw;
-        const ty = s.st + ny * s.sh;
-
-        // formation: this letter's own slice of the scatter timeline
-        let pl = (raw - m.delay * STAGGER) / span;
+        const sp = sl[i];
+        if (!rest || !sp) continue;
+        // the wave of formation runs along the path (centre first, outer last)
+        let pl = (raw - sp.s * STAGGER) / span;
         pl = pl < 0 ? 0 : pl > 1 ? 1 : pl;
         const pe = easeInOut(pl);
-        const bow = Math.sin(pe * Math.PI); // 0 at ends, peaks mid-flight
-        const dx = (tx - rest.x) * pe + m.cx * bow;
-        const dy = (ty - rest.y) * pe + m.cy * bow;
-        chars[i].style.transform = `translate(${dx}px, ${dy}px)`;
+        // slow transverse ripple travelling along the spiral
+        const wave = Math.sin(sp.s * WAVE_N * Math.PI * 2 - now * WAVE_SPEED) * WAVE_AMP;
+        const p = SHELL_POINTS[sp.i];
+        const tx = sh.sl + p[0] * sh.sw + sp.px * wave;
+        const ty = sh.st + p[1] * sh.sh + sp.py * wave;
+        chars[i].style.transform = `translate(${(tx - rest.x) * pe}px, ${(ty - rest.y) * pe}px)`;
       }
     }
 
