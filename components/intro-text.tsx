@@ -1,51 +1,33 @@
 "use client";
 
 import { Fragment, useEffect, useRef } from "react";
-import { SHELL_POINTS, SHELL_ASPECT } from "@/lib/shell-points";
+import { SHELL_POINTS, SHELL_S, SHELL_NRM, SHELL_ASPECT } from "@/lib/shell-points";
 
 /**
  * Studio intro copy with a hover "shell" motion. While the pointer is over the
- * copy, the letters draw themselves onto a nautilus (앵무조개) spiral — in order,
- * from the coil's centre outward, like a wave running along the curve rather than
- * a scatter. Once formed, a slow transverse ripple travels the spiral so the line
- * undulates gently (물결), wistful and smooth — never jittery, never busy. When the
- * pointer leaves, the wave recedes and the letters settle back into the sentences.
+ * copy, the letters flow onto a THICK nautilus (앵무조개) spiral — drawing on in
+ * order along the curve, like a wave, so the band fills from its coil outward.
+ * Inside the band the letters sit at shading densities, darker in the coil and
+ * fading outward (음영). Once formed, a slow long-wavelength ripple travels the
+ * spiral so the whole ribbon sways gently — smooth and wistful, never choppy or
+ * jittery. When the pointer leaves, the wave recedes back into the sentences.
  *
  * Desktop / fine-pointer only; transforms only, never reflow.
  */
 const DUR = 2200; // master draw in / out timeline (ms) — slow + smooth
-const STAGGER = 0.82; // share of the timeline spread along the path (a tight wave)
-const BOX_W_FRAC = 1.04; // spiral contain-fits within this fraction of the block width…
-const BOX_H_FRAC = 1.18; // …and this fraction of its height
-const VOFFSET_FRAC = 0.1; // nudge the formed shell down a touch
-const WAVE_AMP = 7; // px — transverse ripple amplitude while held
-const WAVE_N = 2.5; // number of ripple crests along the spiral
-const WAVE_SPEED = 0.0016; // rad/ms — how fast the ripple travels (slow = dreamy)
+const STAGGER = 0.78; // share of the timeline the draw-on wave is spread over
+const BOX_W_FRAC = 1.06; // spiral contain-fits within this fraction of the block width…
+const BOX_H_FRAC = 1.2; // …and this fraction of its height
+const VOFFSET_FRAC = 0.08; // nudge the formed shell down a touch
+const WAVE_AMP = 6; // px — gentle ribbon sway while held
+const WAVE_N = 1.1; // crests along the whole spiral (low = long, smooth wave)
+const WAVE_SPEED = 0.0013; // rad/ms — how fast the sway travels (slow = dreamy)
 
 const N = SHELL_POINTS.length;
 
-// Per-point unit normal (in aspect-correct space) so the ripple pushes each letter
-// cleanly perpendicular to the spiral, and its 0..1 position along the path.
-const NORMAL: { px: number; py: number; s: number }[] = (() => {
-  const ax = SHELL_POINTS.map((p) => p[0] * SHELL_ASPECT);
-  const ay = SHELL_POINTS.map((p) => p[1]);
-  const out: { px: number; py: number; s: number }[] = [];
-  for (let i = 0; i < N; i++) {
-    const a = Math.max(0, i - 1);
-    const b = Math.min(N - 1, i + 1);
-    let tx = ax[b] - ax[a];
-    let ty = ay[b] - ay[a];
-    const len = Math.hypot(tx, ty) || 1;
-    tx /= len;
-    ty /= len;
-    out.push({ px: -ty, py: tx, s: i / (N - 1) });
-  }
-  return out;
-})();
-
 type Geom = { cw: number; ch: number; pos: { x: number; y: number }[] };
 type Shell = { sl: number; st: number; sw: number; sh: number };
-type Slot = { i: number; s: number; px: number; py: number };
+type Slot = { i: number; s: number; nx: number; ny: number };
 
 const easeInOut = (t: number) =>
   t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
@@ -76,11 +58,11 @@ export function IntroText({ paragraphs }: { paragraphs: string[][] }) {
       }),
     };
     const n = chars.length || 1;
-    // map each letter, in reading order, to an evenly-spaced point along the spiral
+    // spread the letters evenly across every point of the thick band (keeps the shading)
     slot.current = chars.map((_, k) => {
       const i = Math.round((k * (N - 1)) / Math.max(1, n - 1));
-      const nrm = NORMAL[i];
-      return { i, s: nrm.s, px: nrm.px, py: nrm.py };
+      const nrm = SHELL_NRM[i] || [0, 0];
+      return { i, s: SHELL_S[i] ?? 0, nx: nrm[0], ny: nrm[1] };
     });
   };
 
@@ -134,15 +116,15 @@ export function IntroText({ paragraphs }: { paragraphs: string[][] }) {
         const rest = g.pos[i];
         const sp = sl[i];
         if (!rest || !sp) continue;
-        // the wave of formation runs along the path (centre first, outer last)
+        // wave of formation runs along the spiral (coil centre first, outer last)
         let pl = (raw - sp.s * STAGGER) / span;
         pl = pl < 0 ? 0 : pl > 1 ? 1 : pl;
         const pe = easeInOut(pl);
-        // slow transverse ripple travelling along the spiral
+        // slow long-wavelength ribbon sway, along the band normal
         const wave = Math.sin(sp.s * WAVE_N * Math.PI * 2 - now * WAVE_SPEED) * WAVE_AMP;
         const p = SHELL_POINTS[sp.i];
-        const tx = sh.sl + p[0] * sh.sw + sp.px * wave;
-        const ty = sh.st + p[1] * sh.sh + sp.py * wave;
+        const tx = sh.sl + p[0] * sh.sw + sp.nx * wave;
+        const ty = sh.st + p[1] * sh.sh + sp.ny * wave;
         chars[i].style.transform = `translate(${(tx - rest.x) * pe}px, ${(ty - rest.y) * pe}px)`;
       }
     }
