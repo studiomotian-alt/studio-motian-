@@ -20,9 +20,9 @@ const BOX_W_FRAC = 1.06; // spiral contain-fits within this fraction of the bloc
 const BOX_H_FRAC = 1.2; // …and this fraction of its height
 const VOFFSET_FRAC = 0.08; // nudge the formed shell down a touch
 const CURVE = 0.34; // how far the inflow paths bow (galaxy swirl), as a fraction of distance
-const SWAP_MIN = 1700; // ms — slowest / fastest a single place-trade takes
-const SWAP_MAX = 3500;
-const ACTIVE = 0.13; // fraction of letters trading places at any moment (gentle stream)
+const SWAP_MIN = 950; // ms — slowest / fastest a single place-trade takes
+const SWAP_MAX = 2100;
+const ACTIVE = 0.32; // fraction of letters trading places at any moment (lively, streaming)
 const KNN = 7; // a letter only ever trades with one of its nearest points
 
 const N = SHELL_POINTS.length;
