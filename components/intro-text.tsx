@@ -21,7 +21,7 @@ const BOX_W_FRAC = 1.06; // spiral contain-fits within this fraction of the bloc
 const BOX_H_FRAC = 1.2; // …and this fraction of its height
 const VOFFSET_FRAC = 0.08; // nudge the formed shell down a touch
 const CURVE = 0.34; // how far the inflow paths bow (galaxy swirl), as a fraction of distance
-const FLIPS_PER_SEC = 110; // how many letter-pairs flip places each second while held
+const FLIPS_PER_SEC = 400; // how many letter-pairs flip places each second while held
 const KNN = 10; // a letter only ever flips with one of its nearest points
 
 const N = SHELL_POINTS.length;
@@ -125,16 +125,22 @@ export function IntroText({ paragraphs }: { paragraphs: string[][] }) {
     };
   };
 
-  // flip `count` letters to a neighbouring point, instantly (전광판-style)
-  const flip = (count: number) => {
+  // flip `count` letters to a neighbouring point, instantly (전광판-style).
+  // a letter only flips once it (and its target) have settled into the shell,
+  // so the reshuffle begins the instant each part forms — no dead pause.
+  const flip = (count: number, raw: number) => {
     const ls = letters.current;
     const occ = occupant.current;
     const n = ls.length;
+    const span = 1 - STAGGER;
+    const settled = (h: number) => (raw - SHELL_S[h] * STAGGER) / span >= 0.96;
     for (let c = 0; c < count; c++) {
       const i = (Math.random() * n) | 0;
       const Li = ls[i];
+      if (!settled(Li.home)) continue;
       const nb = NEIGH[Li.home];
       const p = nb[(Math.random() * nb.length) | 0];
+      if (!settled(p)) continue;
       const who = occ[p];
       if (who === -1) {
         occ[Li.home] = -1;
@@ -166,12 +172,12 @@ export function IntroText({ paragraphs }: { paragraphs: string[][] }) {
     const ls = letters.current;
     const occ = occupant.current;
 
-    // once the shell is fully formed, flip letters between fixed points — instantly
-    if (hovering.current && raw > 0.97 && occ.length) {
+    // flip letters between fixed points — instantly — the moment they settle
+    if (hovering.current && raw > 0.6 && occ.length) {
       flipBudget.current += (FLIPS_PER_SEC / 1000) * dt;
       const c = Math.floor(flipBudget.current);
       if (c > 0) {
-        flip(c);
+        flip(c, raw);
         flipBudget.current -= c;
       }
     }
