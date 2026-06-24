@@ -5,30 +5,37 @@ import { SHELL_POINTS, SHELL_ASPECT } from "@/lib/shell-points";
 
 /**
  * Studio intro copy with a hover "shell" motion. While the pointer is over the
- * copy, the letters draw themselves — in path order, centre outward — onto the
- * nautilus (앵무조개) outline traced from the studio's reference shell, building
- * the shape the way Motian builds a brand: structure, accreted. Once formed they
- * keep *streaming* slowly along the contour, like characters flowing around a
- * line; the shape holds, only the letters travel. A soft fade hides the point
- * where the path wraps from the aperture back to the centre. When the pointer
- * leaves, the shape un-draws (outer whorl first) back into the sentences.
+ * copy, the letters scatter out of the sentences — each on its own bowed, lightly
+ * jittered path, at its own moment — and settle into a grain field shaped like the
+ * studio's reference nautilus (앵무조개). Held there, the whole field shimmers
+ * (자글자글); it never glides elastically. When the pointer leaves, the grains
+ * scatter back home into the readable sentences.
  *
- * Desktop / fine-pointer only; transforms + opacity only, never reflow. Rest
- * positions are measured once (and on resize / after fonts load) so the running
- * animation never corrupts the maths.
+ * Desktop / fine-pointer only; transforms only, never reflow. Rest positions are
+ * measured once (and on resize / after fonts load) so the running animation never
+ * corrupts the maths.
  */
-const DUR = 1900; // master fly in / out timeline (ms) — slow + lyrical
-const STAGGER = 0.73; // share of the timeline spent drawing letters on in path order
-const BOX_W_FRAC = 1.08; // spiral contain-fits within this fraction of the block width…
-const BOX_H_FRAC = 1.2; // …and this fraction of its height
-const VOFFSET_FRAC = 0.12; // nudge the formed shell down a touch
-const FLOW_SPEED = 0.019; // path-points per ms — slow, calm streaming along the line
-const FADE = 0.045; // fraction of the path at each end where letters fade out / in
-
-const N = SHELL_POINTS.length;
+const DUR = 1600; // master scatter in / out timeline (ms)
+const STAGGER = 0.6; // share of the timeline spread across the letters' random starts
+const BOX_W_FRAC = 1.0; // shell contain-fits within this fraction of the block width…
+const BOX_H_FRAC = 1.15; // …and this fraction of its height
+const VOFFSET_FRAC = 0.1; // nudge the formed shell down a touch
+const CURVE = 18; // px — how far each letter's path bows mid-flight (organic scatter)
+const JIT = 2.2; // px — amplitude of the perpetual grain shimmer
+const F1 = 0.021; // rad/ms — shimmer frequencies (fast = 자글자글)
+const F2 = 0.037;
 
 type Geom = { cw: number; ch: number; pos: { x: number; y: number }[] };
 type Shell = { sl: number; st: number; sw: number; sh: number };
+type Assign = {
+  tx: number; // target point, normalised 0..1
+  ty: number;
+  delay: number; // 0..1 — when this letter starts moving
+  cx: number; // mid-flight bow vector (px)
+  cy: number;
+  s1: number; // shimmer phase seeds
+  s2: number;
+};
 
 const easeInOut = (t: number) =>
   t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
@@ -38,10 +45,9 @@ export function IntroText({ paragraphs }: { paragraphs: string[][] }) {
   const charsRef = useRef<HTMLElement[]>([]);
   const geom = useRef<Geom | null>(null);
   const shell = useRef<Shell | null>(null);
-  const param = useRef<number[]>([]); // each letter's base position along the path
+  const assign = useRef<Assign[]>([]);
   const hovering = useRef(false);
   const progress = useRef(0); // 0 = sentences, 1 = shell
-  const flow = useRef(0); // ever-advancing streaming offset (path-points)
   const raf = useRef(0);
   const lastT = useRef(0);
 
@@ -59,9 +65,26 @@ export function IntroText({ paragraphs }: { paragraphs: string[][] }) {
         return { x: r.left + r.width / 2 - cr.left, y: r.top + r.height / 2 - cr.top };
       }),
     };
-    const n = chars.length || 1;
-    // spread the letters evenly along the whole spiral
-    param.current = chars.map((_, i) => (i * N) / n);
+    // shuffle the fill points so neighbouring letters fly off in every direction
+    const order = SHELL_POINTS.map((_, i) => i);
+    for (let i = order.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [order[i], order[j]] = [order[j], order[i]];
+    }
+    assign.current = chars.map((_, i) => {
+      const p = SHELL_POINTS[order[i % order.length]];
+      const ang = Math.random() * Math.PI * 2;
+      const amt = (0.4 + Math.random() * 0.6) * CURVE;
+      return {
+        tx: p[0],
+        ty: p[1],
+        delay: Math.random(),
+        cx: Math.cos(ang) * amt,
+        cy: Math.sin(ang) * amt,
+        s1: Math.random() * Math.PI * 2,
+        s2: Math.random() * Math.PI * 2,
+      };
+    });
   };
 
   useEffect(() => {
@@ -102,48 +125,36 @@ export function IntroText({ paragraphs }: { paragraphs: string[][] }) {
     const step = dt / DUR;
     if (progress.current < goal) progress.current = Math.min(goal, progress.current + step);
     else if (progress.current > goal) progress.current = Math.max(goal, progress.current - step);
-    const raw = progress.current; // 0 = sentences, 1 = fully formed shell
-
-    flow.current += FLOW_SPEED * dt; // keep the line streaming
+    const raw = progress.current;
 
     const chars = charsRef.current;
     const g = geom.current;
     const s = shell.current;
-    const base = param.current;
+    const as = assign.current;
+    const span = 1 - STAGGER;
     if (g && s) {
-      const span = 1 - STAGGER;
       for (let i = 0; i < chars.length; i++) {
         const rest = g.pos[i];
-        if (!rest) continue;
-        // each letter draws on in path order (centre first, outer whorl last)
-        const home = base[i] / N; // 0..1 home position along the path
-        let pl = (raw - home * STAGGER) / span;
+        const a = as[i];
+        if (!rest || !a) continue;
+        let pl = (raw - a.delay * STAGGER) / span;
         pl = pl < 0 ? 0 : pl > 1 ? 1 : pl;
         const pe = easeInOut(pl);
-        let q = (base[i] + flow.current) % N;
-        if (q < 0) q += N;
-        const i0 = Math.floor(q);
-        const i1 = (i0 + 1) % N;
-        const f = q - i0;
-        const a = SHELL_POINTS[i0];
-        const b = SHELL_POINTS[i1];
-        const px = s.sl + (a[0] + (b[0] - a[0]) * f) * s.sw;
-        const py = s.st + (a[1] + (b[1] - a[1]) * f) * s.sh;
-        chars[i].style.transform = `translate(${(px - rest.x) * pe}px, ${(py - rest.y) * pe}px)`;
-        // fade only the few letters crossing the aperture<->centre wrap
-        const u = q / N;
-        const endFade = Math.min(Math.min(u, 1 - u) / FADE, 1);
-        chars[i].style.opacity = `${1 - (1 - endFade) * pe}`;
+        const tx = s.sl + a.tx * s.sw;
+        const ty = s.st + a.ty * s.sh;
+        const bow = Math.sin(pe * Math.PI); // 0 at ends, 1 mid-flight
+        const jx = (Math.sin(now * F1 + a.s1) + Math.sin(now * F2 + a.s2)) * JIT * pe;
+        const jy = (Math.sin(now * F2 + a.s2 * 1.3) + Math.sin(now * F1 + a.s1 * 0.7)) * JIT * pe;
+        const dx = (tx - rest.x) * pe + a.cx * bow + jx;
+        const dy = (ty - rest.y) * pe + a.cy * bow + jy;
+        chars[i].style.transform = `translate(${dx}px, ${dy}px)`;
       }
     }
 
     if (hovering.current || progress.current > 0.0001) {
       raf.current = requestAnimationFrame(tick);
     } else {
-      for (const el of chars) {
-        el.style.transform = "";
-        el.style.opacity = "";
-      }
+      for (const el of chars) el.style.transform = "";
       raf.current = 0;
     }
   };
@@ -159,7 +170,6 @@ export function IntroText({ paragraphs }: { paragraphs: string[][] }) {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     if (!geom.current) measure();
     computeShell();
-    if (progress.current < 0.01) flow.current = 0; // fresh formation draws cleanly from the centre
     hovering.current = true;
     startLoop();
   };
