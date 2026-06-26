@@ -103,7 +103,17 @@ export const projects: Project[] = [
     behanceUrl:
       "https://www.behance.net/gallery/241622333/BRICK-BAKERS-Cafe-Branding",
   },
-  { slug: "dalkom-on-baking", date: "2025.10", title: "Dalkom on Baking", scope: BI, industry: "Bakery" },
+  {
+    slug: "dalkom-on-baking",
+    date: "2025.10",
+    title: "Dalkom on Baking",
+    scope: BI,
+    industry: "Bakery",
+    thumbnail:
+      "https://mir-s3-cdn-cf.behance.net/projects/808/10acd2251751597.Y3JvcCwzMzY3LDI2MzMsMCww.jpg",
+    behanceUrl:
+      "https://www.behance.net/gallery/251751597/Dalkom-on-Baking-Logo-Design",
+  },
   { slug: "house-oson", date: "2025.09", title: "House Oson", scope: BSBI, industry: "Hospitality" },
   {
     slug: "orly-minbak",
