@@ -12,6 +12,7 @@ type Payload = {
   schedule?: string;
   message?: string;
   website?: string; // honeypot
+  turnstileToken?: string; // Cloudflare Turnstile 응답 토큰
 };
 
 // 필드별 최대 길이 — 남용/DoS 완화 (모든 필드에 적용)
@@ -45,6 +46,33 @@ function rateLimited(ip: string | null): boolean {
     }
   }
   return recent.length > RATE_LIMIT;
+}
+
+// Cloudflare Turnstile 토큰 검증.
+// TURNSTILE_SECRET_KEY가 설정돼 있을 때만 호출된다(키 없으면 검증 단계 자체를 건너뜀).
+async function verifyTurnstile(
+  token: string,
+  secret: string,
+  ip: string | null,
+): Promise<boolean> {
+  try {
+    const form = new URLSearchParams();
+    form.append("secret", secret);
+    form.append("response", token);
+    if (ip) form.append("remoteip", ip);
+    const res = await fetch(
+      "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: form,
+      },
+    );
+    const data = (await res.json()) as { success?: boolean };
+    return data.success === true;
+  } catch {
+    return false; // 검증 호출 자체가 실패하면 안전하게 거부
+  }
 }
 
 function escapeHtml(s: string) {
@@ -117,6 +145,18 @@ export async function POST(req: Request) {
       { error: "이메일 형식을 확인해주세요." },
       { status: 400 },
     );
+  }
+
+  // Cloudflare Turnstile 검증 — 시크릿이 설정된 경우에만 강제(설정 전엔 기존 동작 유지).
+  const turnstileSecret = process.env.TURNSTILE_SECRET_KEY;
+  if (turnstileSecret) {
+    const token = (body.turnstileToken ?? "").trim();
+    if (!token || !(await verifyTurnstile(token, turnstileSecret, ip))) {
+      return NextResponse.json(
+        { error: "보안 확인에 실패했습니다. 페이지를 새로고침 후 다시 시도해주세요." },
+        { status: 403 },
+      );
+    }
   }
 
   const apiKey = process.env.RESEND_API_KEY;

@@ -1,8 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import Script from "next/script";
 
 type Status = "idle" | "submitting" | "success" | "error";
+
+// 사이트키가 설정돼 있을 때만 Turnstile 위젯을 렌더링한다(설정 전엔 폼 동작 변화 없음).
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
 const LABEL = "block text-[11px] tracking-wide text-muted";
 const INPUT =
@@ -28,6 +32,8 @@ export function ContactForm() {
       schedule: String(data.get("schedule") || "").trim(),
       message: String(data.get("message") || "").trim(),
       website: String(data.get("website") || "").trim(),
+      // Turnstile이 폼에 주입하는 숨김 입력값(위젯 미사용 시 빈 문자열)
+      turnstileToken: String(data.get("cf-turnstile-response") || ""),
     };
 
     try {
@@ -114,6 +120,20 @@ export function ContactForm() {
           className="mt-1.5 w-full resize-none border-0 border-b border-line bg-transparent py-1.5 text-[13px] leading-relaxed text-ink outline-none placeholder:text-muted/70 focus:border-ink"
         />
       </div>
+
+      {TURNSTILE_SITE_KEY && (
+        <div className="pt-1">
+          <Script
+            src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+            strategy="afterInteractive"
+          />
+          <div
+            className="cf-turnstile"
+            data-sitekey={TURNSTILE_SITE_KEY}
+            data-theme="light"
+          />
+        </div>
+      )}
 
       <div className="pt-2">
         <button
