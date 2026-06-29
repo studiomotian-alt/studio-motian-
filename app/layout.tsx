@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+// Pretendard 폰트 자체호스팅 (jsDelivr CDN 의존 제거 — 빌드 시 우리 origin으로 번들)
+import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 import "./globals.css";
 import { SiteNav } from "@/components/site-nav";
 import { Cursor } from "@/components/cursor";
