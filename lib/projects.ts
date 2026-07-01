@@ -23,6 +23,17 @@ const BI = "Brand Identity";
 export const projects: Project[] = [
   // ── 2026 ──
   {
+    slug: "stay-nook",
+    date: "2026.06",
+    title: "Stay Nook",
+    scope: BSBI,
+    industry: "Hospitality",
+    thumbnail:
+      "https://mir-s3-cdn-cf.behance.net/projects/808/8a0022252004013.Y3JvcCw0MDc4LDMxOTAsMjAsMA.jpg",
+    behanceUrl:
+      "https://www.behance.net/gallery/252004013/Stay-Nook-Hostel-Branding",
+  },
+  {
     slug: "poesie-papier",
     date: "2026.04",
     title: "Poésie Papier",
