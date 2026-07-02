@@ -4,6 +4,7 @@ import "./globals.css";
 import { SiteNav } from "@/components/site-nav";
 import { Cursor } from "@/components/cursor";
 import { Intro } from "@/components/intro";
+import { AnalyticsBeacon } from "@/components/analytics-beacon";
 
 // Runs before first paint: shows the intro splash once per session (and never
 // for "reduce motion" users), adding a flash-free white cover via .mt-intro-on.
@@ -64,6 +65,7 @@ export default function RootLayout({
         <div id="mt-intro-cover" aria-hidden />
         <Intro />
         <Cursor />
+        <AnalyticsBeacon />
       </body>
     </html>
   );
